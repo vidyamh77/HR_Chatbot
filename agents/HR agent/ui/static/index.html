@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Altostrat HR Agent Portal</title>
+    <!-- Tailwind CSS for modern layouts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Marked library for parsing markdown response citations -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        /* Custom scrollbar styling */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-blue-600 text-white shadow-md px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <span class="text-xl font-bold tracking-wide">Altostrat HR Portal</span>
+            <span class="bg-blue-800 text-xs px-2.5 py-1 rounded-full uppercase font-semibold">Agentic Assistant MVP 1</span>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="flex-1 flex overflow-hidden">
+        
+        <!-- Chat Workspace Area -->
+        <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
+            
+            <!-- Conversation Pane -->
+            <div id="chatPane" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                <!-- Welcome system bubble -->
+                <div class="flex items-start space-x-3 max-w-3xl">
+                    <div class="bg-blue-100 text-blue-600 rounded-full h-8 w-8 flex items-center justify-center font-bold text-sm shrink-0">AI</div>
+                    <div class="bg-white border border-slate-200 rounded-2xl rounded-tl-none p-4 shadow-sm text-sm">
+                        <p class="font-medium text-blue-700 mb-1">Altostrat Assistant</p>
+                        <p>Hello! I can answer HR policy questions, update your contact details in WorkWeek, query leave balances, submit leave requests, and manage IT support tickets.</p>
+                        <p class="mt-2 text-xs text-slate-400">Examples: "How many sick leave days do I get?" or "Update my address" or "Create a ticket for network outage".</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Bar -->
+            <footer class="bg-white border-t border-slate-200 p-4">
+                <form id="chatForm" class="max-w-4xl mx-auto flex items-center space-x-3">
+                    <input type="text" id="userInput" placeholder="Ask a question or perform an action..." class="flex-1 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-inner" autocomplete="off" />
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl px-6 py-3 font-semibold text-sm shadow transition">
+                        Send
+                    </button>
+                </form>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Script connection -->
+    <script src="script.js"></script>
+</body>
+</html>

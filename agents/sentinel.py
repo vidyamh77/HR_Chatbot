@@ -18,22 +18,26 @@ class SentinelOutput(BaseModel):
     anomalies: List[Anomaly] = Field(description="List of detected anomalies")
     daily_cost_usd: float = Field(description="Total cost for the day")
 
-def fetch_daily_billing_data() -> str:
-    """Fetch billing data from real BigQuery export table for the last 7 days."""
+def fetch_daily_billing_data() -> Dict[str, Any]:
+    """Fetch billing data from BigQuery export table for the last 7 days."""
+    project_id = input("Enter BigQuery Project ID: ")
+    table_full_path = input("Enter BigQuery Table Full Path (dataset.table): ")
+    
     sa_key_path = os.environ.get("BIGQUERY_SERVICE_ACCOUNT_JSON")
     
     if sa_key_path:
         credentials = service_account.Credentials.from_service_account_file(sa_key_path)
-        client = bigquery.Client(credentials=credentials, project="vmy-project-76897")
+        client = bigquery.Client(credentials=credentials, project=project_id)
     else:
-        client = bigquery.Client(project="vmy-project-76897")
-    query = """
+        client = bigquery.Client(project=project_id)
+        
+    query = f"""
         SELECT
           DATE(usage_start_time) AS date,
           service.description AS name,
           SUM(cost) AS cost
         FROM
-          `vmy-project-76897.Finopsagent.gcp_billing_export_v1_01D280_B3E69D_E03EA0`
+          `{project_id}.{table_full_path}`
         WHERE
           _PARTITIONDATE >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
         GROUP BY
@@ -57,7 +61,7 @@ def fetch_daily_billing_data() -> str:
         })
         daily_data[date_str]["total_cost"] += float(row.cost)
         
-    return json.dumps(daily_data)
+    return daily_data
 
 def run_sentinel(client: genai.Client) -> Dict[str, Any]:
     """Run the Sentinel Agent to monitor costs and detect anomalies."""
