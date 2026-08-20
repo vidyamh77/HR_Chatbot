@@ -136,6 +136,51 @@ def resolve_employee_id(query: str) -> str | None:
             return emp_id
     return None
 
+def contains_unauthorized_target(query: str, active_user_id: str) -> bool:
+    """Helper to detect if a query mentions a third-person proper noun/name or ID that active user is not authorized to access."""
+    # 1. Map active user ID to their allowed names
+    active_names_lower = []
+    for name, emp_id in names_map.items():
+        if emp_id.replace("-", "").upper() == active_user_id.replace("-", "").upper():
+            active_names_lower.append(name.lower())
+            for word in name.lower().split():
+                active_names_lower.append(word)
+
+    # 2. Extract potential proper nouns (capitalized words not at the start of sentences)
+    import re
+    words = re.findall(r"\b[A-Za-z]+\b", query)
+    
+    for idx, word in enumerate(words):
+        # Ignore first word of query if it is start of sentence, and ignore common system keywords
+        if idx == 0:
+            continue
+        if word[0].isupper() and word.lower() not in ["i", "workweek", "serviceimmediately", "it", "hr", "utc", "gmt", "vacation", "sick", "hardware", "software", "network", "facilities"]:
+            # If this proper noun is not the active user's own name
+            if word.lower() not in active_names_lower:
+                # Resolve the name to check if active user is their manager
+                target_resolved = None
+                query_lower = query.lower()
+                for name, emp_id in names_map.items():
+                    if name in query_lower:
+                        target_resolved = emp_id
+                        break
+                
+                # If they are a known employee and active user is their manager, allow it
+                if target_resolved and is_manager_of(active_user_id, target_resolved):
+                    continue
+                return True
+
+    # 3. Check for any explicit employee ID in query
+    emp_match = re.search(r"EMP-?\d+", query, re.IGNORECASE)
+    if emp_match:
+        eid = emp_match.group(0)
+        std_eid = eid.replace("-", "").upper()
+        std_active = active_user_id.replace("-", "").upper()
+        if std_eid != std_active and not is_manager_of(active_user_id, eid):
+            return True
+
+    return False
+
 # 3. Define Hub Routing Tools (Allows Hub Agent to delegate to Spoke Agents)
 async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
     """Delegates a query to the WorkWeek Agent after validating RBAC access rules.
@@ -147,11 +192,16 @@ async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
     if any(term in query.lower() for term in ["study", "maternity", "bonding", "carer", "toil", "ramp-back"]):
         return "Error: Only 'Vacation' and 'Sick' leave types are supported."
 
-    target_emp = resolve_employee_id(query)
-    
     # Extract active user from session state
     active_user = tool_context.state.get("active_user_id") or "EMP001"
     
+    # Pre-intercept proper nouns or IDs targetting someone else
+    if contains_unauthorized_target(query, active_user):
+        raise AccessDeniedException(
+            f"Access Denied: User {active_user} is not authorized to access records of this third party."
+        )
+
+    target_emp = resolve_employee_id(query)
     if target_emp:
         target_std = target_emp.replace("-", "").upper()
         active_std = active_user.replace("-", "").upper()
@@ -170,11 +220,16 @@ async def query_serviceimmediately_agent(query: str, tool_context: ToolContext) 
     Args:
         query: The request/instruction for the ServiceImmediately agent.
     """
-    target_emp = resolve_employee_id(query)
-    
     # Extract active user from session state
     active_user = tool_context.state.get("active_user_id") or "EMP001"
     
+    # Pre-intercept proper nouns or IDs targetting someone else
+    if contains_unauthorized_target(query, active_user):
+        raise AccessDeniedException(
+            f"Access Denied: User {active_user} is not authorized to view or modify support tickets of this third party."
+        )
+
+    target_emp = resolve_employee_id(query)
     if target_emp:
         target_std = target_emp.replace("-", "").upper()
         active_std = active_user.replace("-", "").upper()
