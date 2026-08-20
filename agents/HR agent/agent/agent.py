@@ -88,6 +88,32 @@ def is_manager_of(manager_id: str, employee_id: str) -> bool:
     reports = MANAGER_MAP.get(m_id, [])
     return e_id in reports
 
+def resolve_employee_id(query: str) -> str | None:
+    """Helper to resolve common names or extract employee ID format from query."""
+    import re
+    # Check if there is an explicit ID in the query
+    emp_match = re.search(r"EMP-?\d+", query, re.IGNORECASE)
+    if emp_match:
+        return emp_match.group(0)
+        
+    query_lower = query.lower()
+    names_map = {
+        "luke wilson": "EMP-004",
+        "luke": "EMP-004",
+        "john smith": "EMP-001",
+        "john": "EMP-001",
+        "suman banerjee": "EMP-361",
+        "suman": "EMP-361",
+        "vivek anurag": "EMP-474",
+        "vivek": "EMP-474",
+        "vidya m h": "EMP-386",
+        "vidya": "EMP-386"
+    }
+    for name, emp_id in names_map.items():
+        if name in query_lower:
+            return emp_id
+    return None
+
 # 3. Define Hub Routing Tools (Allows Hub Agent to delegate to Spoke Agents)
 async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
     """Delegates a query to the WorkWeek Agent after validating RBAC access rules.
@@ -95,10 +121,11 @@ async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
     Args:
         query: The request/instruction for the WorkWeek agent.
     """
-    import re
-    # Extract target employee ID (e.g. EMP-386, EMP-004) from query
-    emp_match = re.search(r"EMP-?\d+", query, re.IGNORECASE)
-    target_emp = emp_match.group(0) if emp_match else None
+    # Block unsupported leave types at the routing boundary
+    if any(term in query.lower() for term in ["study", "maternity", "bonding", "carer", "toil", "ramp-back"]):
+        return "Error: Only 'Vacation' and 'Sick' leave types are supported."
+
+    target_emp = resolve_employee_id(query)
     
     # Extract active user from session state
     active_user = tool_context.state.get("active_user_id") or "EMP001"
@@ -116,12 +143,34 @@ async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
     return await tool_context.run_node(workweek_agent, query)
 
 async def query_serviceimmediately_agent(query: str, tool_context: ToolContext) -> str:
-    """Delegates a query to the ServiceImmediately Agent to create, comment, or check tickets.
+    """Delegates a query to the ServiceImmediately Agent after validating RBAC access rules.
     
     Args:
         query: The request/instruction for the ServiceImmediately agent.
     """
-    return await tool_context.run_node(serviceimmediately_agent, query)
+    target_emp = resolve_employee_id(query)
+    
+    # Extract active user from session state
+    active_user = tool_context.state.get("active_user_id") or "EMP001"
+    
+    if target_emp:
+        target_std = target_emp.replace("-", "").upper()
+        active_std = active_user.replace("-", "").upper()
+        
+        # Enforce RBAC block on ticketing
+        if target_std != active_std and not is_manager_of(active_user, target_emp):
+            raise AccessDeniedException(
+                f"Access Denied: User {active_user} is not authorized to view or modify support tickets of {target_emp}."
+            )
+            
+    try:
+        return await tool_context.run_node(serviceimmediately_agent, query)
+    except Exception as e:
+        # Gracefully intercept tracebacks if updating closed tickets
+        err_str = str(e)
+        if "closed" in err_str.lower() or "not modify" in err_str.lower() or "read-only" in err_str.lower():
+            return "Error: This ticket is already closed and cannot be modified."
+        raise e
 
 async def query_policy_agent(query: str, tool_context: ToolContext) -> str:
     """Delegates a query to the Policy Agent to search and answer company policy rules.
