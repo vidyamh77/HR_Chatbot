@@ -52,6 +52,131 @@
           }
         }
       ]
+    },
+    {
+      "eval_case_id": "multiturn_agentic_workflow_sequence",
+      "turns": [
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "How many days of vacation leave do I have accrued?\n\n[System Context: Active User ID is 'EMP-386']"}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "17.0 days remaining"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Request vacation for 2 days starting next Monday 2026-08-24 to 2026-08-25."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "Approved / Vacation"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "What is my sick leave balance?"}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "4.0 days remaining"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Check the status of support ticket INC0002778."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "INC0002778 / New"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Add a comment to ticket INC0002778 saying 'urgent review please'."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "comment added / urgent review"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "What is the daily meal limit on business travel?"}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "US $120"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Can I buy a host gift for US $60?"}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "pre-approval / above $50"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "What's the MC submission deadline if I'm outpatient sick for 3 days?"}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "within 48 hours / MC"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Create a ticket for Category 'Hardware', Short Description 'broken mouse'."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "INC / Hardware / broken mouse / Low"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Check the status of the new ticket we just created."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "INC / New"}]
+            }
+          }
+        }
+      ]
     }
   ]
 }

@@ -233,6 +233,69 @@
           "parts": [{"text": "I cannot perform this action / blocked / unauthorized / English"}]
         }
       }
+    },
+    {
+      "eval_case_id": "sick_leave_policy_mc_deadline",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What's the MC submission deadline if I'm outpatient sick for 3 days in Singapore?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "within 48 hours / outpatient sick leave / Singapore"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "vacation_accrual_shift_worker",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "I'm a shift worker with 8 years continuous tenure working 12-hour shifts. How many vacation days do I accrue per shift?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "21 days / 1.5 vacation days / 12-hour shift"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "parenting_ramp_back_salary",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Are my salary and benefits affected during the 2-week parenting ramp back period?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "100% of your normal salary / 50% of your normal weekly hours"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "expense_gift_card_cousin",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Can I buy and get reimbursed for a $45 gift card for my cousin in Sydney?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "strictly prohibited / gift card / cousin"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "ethics_room_salon_reimbursement",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "I have manager approval for an $80 dinner at a room salon. Can I get reimbursed?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "role": "model",
+        "parts": [{"text": "strictly prohibited / room salon / adult entertainment"}]
+      }
     }
   ]
 }
