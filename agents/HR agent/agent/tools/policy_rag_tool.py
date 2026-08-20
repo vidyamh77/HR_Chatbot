@@ -225,6 +225,25 @@ MOCK_POLICIES = [
             "Claims older than 90 days require VP approval. Claims older than one year are non-reimbursable."
         ),
         "keywords": ["travel expense", "meal allowance", "group meals", "aged claims", "vp approval", "director approval", "$120", "$500", "concur"]
+    },
+    {
+        "title": "Altostrat Singapore Travel and Expense Policy (2025)",
+        "section": "Meal Allowances & Daily Caps",
+        "link": "https://altostrat.sharepoint.com/hr/policies/expenses-2025#meals",
+        "content": (
+            "For calendar year 2025, business trip meal allowances in Singapore are capped at SGD 30 per day."
+        ),
+        "keywords": ["meal allowance", "daily cap", "singapore", "expenses", "2025", "food"]
+    },
+    {
+        "title": "Altostrat Singapore Travel and Expense Policy (2026)",
+        "section": "Meal Allowances & Daily Caps",
+        "link": "https://altostrat.sharepoint.com/hr/policies/expenses-2026#meals",
+        "content": (
+            "Effective 1 January 2026, the daily meal allowance for business travel within Singapore is increased to SGD 45. "
+            "This policy supersedes all prior guidelines, including the 2025 cap of SGD 30."
+        ),
+        "keywords": ["meal allowance", "daily cap", "singapore", "expenses", "2026", "food"]
     }
 ]
 
