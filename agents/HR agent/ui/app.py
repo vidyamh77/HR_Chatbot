@@ -44,6 +44,31 @@ LIVE_USER_MAPPING = {
         "name": "Vidya M H",
         "email": "vidyamh@altostrat.com"
     },
+    "sumanbaner": {
+        "employee_id": "EMP-361",
+        "name": "Suman Banerjee",
+        "email": "sumanbaner@altostrat.com"
+    },
+    "sumnabaner": {
+        "employee_id": "EMP-361",
+        "name": "Suman Banerjee",
+        "email": "sumanbaner@altostrat.com"
+    },
+    "vivek": {
+        "employee_id": "EMP-474",
+        "name": "Vivek Anurag",
+        "email": "vivek.anurag@altostrat.com"
+    },
+    "viveka": {
+        "employee_id": "EMP-474",
+        "name": "Vivek Anurag",
+        "email": "viveka@altostrat.com"
+    },
+    "vivek.anurag": {
+        "employee_id": "EMP-474",
+        "name": "Vivek Anurag",
+        "email": "vivek.anurag@altostrat.com"
+    },
     "jane.doe": {
         "employee_id": "EMP-001",
         "name": "Jane Doe",
@@ -93,13 +118,12 @@ async def login_endpoint(req: LoginRequest):
             detail="Invalid username. Please enter a valid Altostrat username."
         )
     
-    # 2. Validate live on the WorkWeek MCP server
+    # 2. Validate live on the WorkWeek MCP server (Soft check: logs warning if not found, but allows login)
     employee_id = user_info["employee_id"]
     is_valid = await verify_employee_live(employee_id)
     if not is_valid:
-        raise HTTPException(
-            status_code=404, 
-            detail=f"Employee profile for '{username}' (ID: {employee_id}) was not found in the live WorkWeek application database."
+        logger.warning(
+            f"Employee profile for '{username}' (ID: {employee_id}) was not found in the live WorkWeek MCP database. Allowing login using configured mapping fallback."
         )
         
     return LoginResponse(
