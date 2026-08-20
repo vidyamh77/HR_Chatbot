@@ -1,6 +1,8 @@
 metrics_to_run:
   - custom_response_quality
   - context_hit_rate_at_3
+  - agent_turn_count
+  - overall_system_health
 
 custom_metrics:
   # Default: local LLM-as-judge (see response_quality.py). Runs in-process via
@@ -14,3 +16,18 @@ custom_metrics:
       def evaluate(instance):
           turns = (instance.get("agent_data") or {}).get("turns", [])
           return {'score': len(turns)}
+  - name: overall_system_health
+    custom_function: |
+      def evaluate(instance):
+          metrics = (instance.get("metrics") or {})
+          quality = metrics.get("custom_response_quality", 0.0)
+          hit_rate = metrics.get("context_hit_rate_at_3", 0.0)
+          turns = metrics.get("agent_turn_count")
+          if turns is None:
+              turns = len((instance.get("agent_data") or {}).get("turns", []))
+          weights = {'custom_response_quality': 0.5, 'context_hit_rate_at_3': 0.3, 'agent_turn_count': 0.2}
+          weighted_quality = quality * weights['custom_response_quality']
+          weighted_recall = hit_rate * weights['context_hit_rate_at_3']
+          efficiency_score = 1.0 / max(turns, 1.0)
+          weighted_efficiency = efficiency_score * weights['agent_turn_count']
+          return {'score': weighted_quality + weighted_recall + weighted_efficiency}

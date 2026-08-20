@@ -8,11 +8,34 @@ This report details the evaluation framework, custom evaluation metrics, and tes
 
 The HR Agentic Solution uses a **Quality Flywheel** methodology to verify functional compliance, safety guardrails, and conversation quality. The evaluation suite is designed to run in-process using the official `agents-cli eval` command line.
 
-### LLM-as-a-Judge Pattern
+### Framework Comparison & Selection Justification
+*   **Chosen Framework**: `agents-cli` (custom CLI python script integrations)
+*   **Justification & Trade-off Analysis**:
+    *   **In-Process Local Execution**: `agents-cli` runs entirely in-process locally. This bypasses SaaS network/cloud dashboard dependencies associated with frameworks like TruLens or DeepEval, guaranteeing privacy and data containment boundaries.
+    *   **Native ADK Lifecycle Integration**: Leverages the official Google Agent Development Kit hooks natively. This allows direct injection of session state variables (such as active user context or headers) and direct mock backend server routing, which third-party packages do not easily support.
+    *   **Zero Orchestration Overhead**: Standard evaluation packages (e.g. Ragas) introduce additional wrapper classes and complex dependency maps. Running custom Python functions within `agents-cli` eliminates overhead, ensuring low latency.
+
+### LLM-as-a-Judge Pattern & Reliability
 To evaluate conversational responses that do not have exact textual matches, the framework leverages an LLM-as-a-judge model (specified in `tests/eval/response_quality.py`). The judge evaluates responses on:
 1.  **Factuality & Policy Grounding**: Ensuring answers are derived exclusively from the retrieved context.
 2.  **Citation Completeness**: Ensuring every policy answer includes a source link (e.g., `[Title - Section](Link)`).
 3.  **Governance Compliance**: Confirming that prohibited spending is blocked, and transaction rules are strictly respected.
+
+*   **Judge Reliability Target**: Cohen's Kappa agreement coefficient $\ge 0.75$ compared with certified gold labels.
+*   **Human-in-the-Loop Curation Strategy**:
+    *   **100% Audit Rate**: Direct human review of all failed test cases, safety guardrail blocks, and unexpected tool crash traces.
+    *   **20% Random Sampling Audit Rate**: Monthly random audit of successful, passing runs to verify factual alignment and correct citations.
+
+### Quantitative Score Aggregation Formula
+A single overall quantitative system health score is computed for each test instance using a weighted aggregation of response quality, context hit rate, and execution efficiency:
+
+$$Overall\_System\_Health = w_q \cdot Quality + w_h \cdot Hit\_Rate + w_e \cdot Efficiency$$
+
+Where:
+*   **Quality ($Quality$)**: Score returned by the custom `custom_response_quality` metric (between `0.0` and `1.0`).
+*   **Hit Rate ($Hit\_Rate$)**: Score returned by the custom RAG retrieval metric `context_hit_rate_at_3` (between `0.0` and `1.0`).
+*   **Efficiency ($Efficiency$)**: Inverse turn count factor defined as $\frac{1.0}{\max(turns, 1.0)}$, encouraging the orchestrator to solve queries in fewer turns.
+*   **Weights**: Customized weights are set as $w_q = 0.5$ (Quality), $w_h = 0.3$ (RAG Context Hit Rate), and $w_e = 0.2$ (Efficiency / Turn count), summing to $1.0$.
 
 ### Scope and Assumptions
 To establish a clear testing context, the evaluation framework operates under the following explicit boundary assumptions:
