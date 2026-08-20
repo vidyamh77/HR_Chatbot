@@ -173,8 +173,8 @@ async def run_query_async(query: str, user_id: str = "EMP001", session_id: str =
         cleaned_response = redact_spii(final_response_text)
         
         # Screen toxicity
-        toxicity_check = screen_toxicity(cleaned_response)
-        if not toxicity_check["is_safe"]:
+        is_toxic = screen_toxicity(cleaned_response)
+        if is_toxic:
             log_transaction(
                 user_id=user_id,
                 session_id=session_id,
@@ -187,8 +187,9 @@ async def run_query_async(query: str, user_id: str = "EMP001", session_id: str =
             return "Response blocked by output safety rules.", "BLOCKED"
 
         # Verify Grounding (using evidence from RAG/MCP calls)
-        grounding_check = verify_grounding(cleaned_response, evidence)
-        if not grounding_check["is_grounded"]:
+        evidence_text = "\n".join([str(e.get("payload", "")) for e in evidence])
+        is_grounded = verify_grounding(cleaned_response, evidence_text, query)
+        if not is_grounded:
             log_transaction(
                 user_id=user_id,
                 session_id=session_id,
