@@ -233,6 +233,19 @@
           "parts": [{"text": "I cannot perform this action / blocked / unauthorized / English"}]
         }
       }
+    },
+    {
+      "eval_case_id": "uc-1.1_policy_recency_conflict",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What is the current meal allowance in Singapore, considering the latest 2026 policy changes?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "SGD 45 / Singapore / meal allowance / 2026"}]
+        }
+      }
     }
   ]
 }
