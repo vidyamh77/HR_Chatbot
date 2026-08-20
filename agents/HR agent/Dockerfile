@@ -22,6 +22,7 @@ COPY ./pyproject.toml ./README.md ./
 
 COPY ./agent ./agent
 COPY ./ui ./ui
+COPY ./mocks ./mocks
 
 RUN uv sync
 
