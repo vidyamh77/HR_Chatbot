@@ -213,7 +213,10 @@ async def run_query_async(query: str, user_id: str = "EMP001", session_id: str =
         return cleaned_response, "SUCCESS"
 
     except Exception as e:
-        import uvicorn
+        import traceback
+        import sys
+        traceback.print_exc(file=sys.stderr)
+        sys.stderr.flush()
         logger_err = f"Agent execution crash: {e}"
         log_transaction(
             user_id=user_id,

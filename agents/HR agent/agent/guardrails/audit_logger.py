@@ -48,5 +48,9 @@ def log_transaction(
         "error_code": error_code
     }
 
+    # Write to local file for persistence
     with open(LOG_FILE_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(log_entry) + "\n")
+        
+    # Also print to stdout for container/cloud logging extraction
+    print(f"AUDIT_LOG: {json.dumps(log_entry)}", flush=True)
