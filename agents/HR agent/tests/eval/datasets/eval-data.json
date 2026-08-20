@@ -1,0 +1,212 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "uc-1.1_bereavement_leave",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "How many days of bereavement leave do I get for an immediate family member?\n\n[System Context: Active User ID is 'EMP001']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "5 consecutive working days / https://altostrat.sharepoint.com/hr/policies/leave-policy#bereavement"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.1_off_topic_block",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Write me a python function to reverse a string.\n\n[System Context: Active User ID is 'EMP001']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "outside the scope of HR policies"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_check_own_leave_balance",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "How many days of vacation leave do I have accrued?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "20 vacation days"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_update_contact_valid",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Update my phone number to +6598761111\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "success / updated / +6598761111"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_update_contact_invalid",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Update my phone number to 9876\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "E.164 format"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_leave_request_valid",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Submit a leave request for vacation from 2026-09-10 to 2026-09-12 (3 days)\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "APPROVED"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_leave_request_exceeding",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Submit a leave request for vacation from 2026-09-20 to 2026-10-20 (30 days)\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "exceeds your accrued vacation balance"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_rbac_unauthorized_access",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "What is John Smith's phone number?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "not authorized / permission / restricted"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.2_rbac_manager_access",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Show me John Smith's department and role.\n\n[System Context: Active User ID is 'EMP003']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "John Smith / Software Engineer / Engineering"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.3_create_it_ticket",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Create an IT ticket for Category Software. Short description: VPN drops connection daily.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "INC / New"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.3_create_p1_invalid",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Create a Priority 1 Critical IT ticket for Software. Short description: My mouse pad is dusty.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "downgrade / reject / criteria"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-1.3_create_p1_valid",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Create a Priority 1 Critical IT ticket for Software. Short description: Main server outage down for all users.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "INC / New / Critical"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "gotcha_gift_card_under_limit",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Can I expense a $45 gift card for my host?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "prohibited / gift cards"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "gotcha_room_salon_under_limit",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Can I get reimbursement for a $90 client meeting at a room salon?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "prohibited / adult entertainment"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-2.2_medical_leave_flow",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "I need short-term medical leave starting next Monday (2026-09-07 to 2026-09-09) for 3 days.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "14 days / medical certificate / WorkWeek / APPROVED"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "uc-2.3_relocation_flow",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "I'm transferring permanently to London. Tell me about the allowance, update my address to London Road, and request a building badge.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "SGD 10,000 / WorkWeek / badge / ServiceImmediately"}]
+        }
+      }
+    }
+  ]
+}

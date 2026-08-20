@@ -1,0 +1,57 @@
+{
+  "eval_cases": [
+    {
+      "eval_case_id": "multiturn_relocation_sequence",
+      "turns": [
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "I'm permanently transferring to the London office. What is my relocation allowance limit?\n\n[System Context: Active User ID is 'EMP-386']"}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "SGD 10,000"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Great. Please update my home address in WorkWeek."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "Please provide your structured new address"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "My new address is London Road, London, United Kingdom."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "address has been updated / London Road"}]
+            }
+          }
+        },
+        {
+          "prompt": {
+            "role": "user",
+            "parts": [{"text": "Now open a badge key request ticket in ServiceImmediately."}]
+          },
+          "reference": {
+            "response": {
+              "role": "model",
+              "parts": [{"text": "ITSM ticket / facilities badge / INC"}]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
