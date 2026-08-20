@@ -129,7 +129,16 @@ AGENT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APP_NAME = "hr_agentic_solution"
 
 # --- Live SaaS Integration Configuration ---
-X_MCP_TOKEN = os.getenv("X_MCP_TOKEN", "mcp_U9oSNftO8cuJ3LUynzTTrioN_4RxXyqfrxQv5wIqO4Y")
-WORKWEEK_MCP_URL = "https://mock-saas.aishprabhat.demo.altostrat.com/work-week/mcp/"
-SERVICEIMMEDIATELY_MCP_URL = "https://mock-saas.aishprabhat.demo.altostrat.com/service-immediately/mcp/"
+X_MCP_TOKEN = os.getenv("X_MCP_TOKEN")
+if not X_MCP_TOKEN:
+    raise ValueError("CRITICAL SECURITY ERROR: X_MCP_TOKEN environment variable is not configured.")
+
+WORKWEEK_MCP_URL = os.getenv("WORKWEEK_MCP_URL")
+if not WORKWEEK_MCP_URL:
+    raise ValueError("CRITICAL CONFIGURATION ERROR: WORKWEEK_MCP_URL environment variable is not configured.")
+
+SERVICEIMMEDIATELY_MCP_URL = os.getenv("SERVICEIMMEDIATELY_MCP_URL")
+if not SERVICEIMMEDIATELY_MCP_URL:
+    raise ValueError("CRITICAL CONFIGURATION ERROR: SERVICEIMMEDIATELY_MCP_URL environment variable is not configured.")
+
 

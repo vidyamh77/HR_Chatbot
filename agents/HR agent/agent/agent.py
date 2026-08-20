@@ -1,4 +1,4 @@
-"""HR Agentic Solution Orchestrator and Runner."""
+"""HR Agentic Solution Orchestrator and Runner (Hub-and-Spoke Architecture)."""
 import asyncio
 import sys
 from typing import List, Dict, Any, Tuple
@@ -6,10 +6,16 @@ from typing import List, Dict, Any, Tuple
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+from google.adk.tools.base_tool import ToolContext
 from google.genai import types
 
 from . import config
-from .prompt import POLICY_AGENT_PROMPT
+from .prompt import (
+    HUB_AGENT_PROMPT,
+    WORKWEEK_AGENT_PROMPT,
+    SERVICEIMMEDIATELY_AGENT_PROMPT,
+    POLICY_AGENT_PROMPT
+)
 from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 from .tools.policy_rag_tool import search_policy_docs
@@ -18,7 +24,7 @@ from .guardrails.input_shield import validate_input
 from .guardrails.output_shield import redact_spii, screen_toxicity, verify_grounding
 from .guardrails.audit_logger import log_transaction
 
-# Instantiate WorkWeek MCP Toolset
+# 1. Instantiate Spoke MCP and RAG Toolsets
 workweek_mcp = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
         url=config.WORKWEEK_MCP_URL,
@@ -26,7 +32,6 @@ workweek_mcp = McpToolset(
     )
 )
 
-# Instantiate ServiceImmediately MCP Toolset
 serviceimmediately_mcp = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
         url=config.SERVICEIMMEDIATELY_MCP_URL,
@@ -34,20 +39,67 @@ serviceimmediately_mcp = McpToolset(
     )
 )
 
-# Register live toolsets and policy RAG tool
-ALL_TOOLS = [
-    workweek_mcp,
-    serviceimmediately_mcp,
-    search_policy_docs
-]
+# 2. Define Spoke Agents (Each has its own dedicated tools)
+workweek_agent = LlmAgent(
+    model=config.GEMINI_MODEL,
+    name="workweek_agent",
+    description="Handles employee profiles, leave balances, contact updates, and leave requests.",
+    instruction=WORKWEEK_AGENT_PROMPT,
+    tools=[workweek_mcp]
+)
 
-# Initialize ADK LlmAgent
+serviceimmediately_agent = LlmAgent(
+    model=config.GEMINI_MODEL,
+    name="serviceimmediately_agent",
+    description="Handles support tickets and lifecycle operations in ServiceImmediately.",
+    instruction=SERVICEIMMEDIATELY_AGENT_PROMPT,
+    tools=[serviceimmediately_mcp]
+)
+
+policy_agent = LlmAgent(
+    model=config.GEMINI_MODEL,
+    name="policy_agent",
+    description="Answers policy questions using retrieved HR guidelines.",
+    instruction=POLICY_AGENT_PROMPT,
+    tools=[search_policy_docs]
+)
+
+# 3. Define Hub Routing Tools (Allows Hub Agent to delegate to Spoke Agents)
+async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
+    """Delegates a query to the WorkWeek Agent to check balances, profiles, or requests.
+    
+    Args:
+        query: The request/instruction for the WorkWeek agent.
+    """
+    return await tool_context.run_node(workweek_agent, query)
+
+async def query_serviceimmediately_agent(query: str, tool_context: ToolContext) -> str:
+    """Delegates a query to the ServiceImmediately Agent to create, comment, or check tickets.
+    
+    Args:
+        query: The request/instruction for the ServiceImmediately agent.
+    """
+    return await tool_context.run_node(serviceimmediately_agent, query)
+
+async def query_policy_agent(query: str, tool_context: ToolContext) -> str:
+    """Delegates a query to the Policy Agent to search and answer company policy rules.
+    
+    Args:
+        query: The policy question.
+    """
+    return await tool_context.run_node(policy_agent, query)
+
+# 4. Initialize Hub Agent (Root Agent)
 root_agent = LlmAgent(
     model=config.GEMINI_MODEL,
-    name="hr_agentic_solution",
-    description="Automated secure Tier 1 HR policy and self-service transaction assistant.",
-    instruction=POLICY_AGENT_PROMPT,
-    tools=ALL_TOOLS
+    name="hr_agent_hub",
+    description="Automated secure Tier 1 HR assistant hub.",
+    instruction=HUB_AGENT_PROMPT,
+    tools=[
+        query_workweek_agent,
+        query_serviceimmediately_agent,
+        query_policy_agent
+    ]
 )
 
 _session_service = InMemorySessionService()
@@ -78,7 +130,6 @@ async def run_query_async(query: str, user_id: str = "EMP001", session_id: str =
     input_validation = validate_input(query)
     if not input_validation["is_safe"]:
         reason = input_validation["reason"]
-        # Log Blocked request
         log_transaction(
             user_id=user_id,
             session_id=session_id,
@@ -98,143 +149,95 @@ async def run_query_async(query: str, user_id: str = "EMP001", session_id: str =
     final_response_text = ""
     evidence = []
     invoked_tools = []
-    has_write_action = False
 
     try:
-        # Run agent loop
-        async for event in runner.run_async(
-            user_id=user_id, session_id=session_id, new_message=message
-        ):
+        async for event in runner.run_async(user_id=user_id, session_id=session_id, new_message=message):
             if not (event.content and event.content.parts):
                 continue
             
+            # Extract tool invocation names and outputs
             for part in event.content.parts:
-                # Catch function calls (before execution, or intercept call request)
-                fc = getattr(part, "function_call", None)
-                if fc is not None:
-                    tool_name = fc.name
-                    invoked_tools.append(tool_name)
-                    if tool_name in ["update_personal_info", "request_time_off", "cancel_leave_request", "create_ticket", "add_ticket_comment", "update_ticket_status"]:
-                        has_write_action = True
-                
-                # Catch function responses (retrieved context)
                 fr = getattr(part, "function_response", None)
                 if fr is not None:
-                    evidence.append({
-                        "tool": getattr(fr, "name", "?"),
-                        "response": fr.response
-                    })
-            
+                    tool_name = getattr(fr, "name", "?")
+                    invoked_tools.append(tool_name)
+                    evidence.append({"tool": tool_name, "payload": fr.response})
+
             if event.is_final_response() and event.content.parts:
                 texts = [p.text for p in event.content.parts if getattr(p, "text", None)]
                 if texts:
                     final_response_text = "\n".join(texts)
-                    
+
+        # 2. Output Guardrails Check
+        # Redact SPII
+        cleaned_response = redact_spii(final_response_text)
+        
+        # Screen toxicity
+        toxicity_check = screen_toxicity(cleaned_response)
+        if not toxicity_check["is_safe"]:
+            log_transaction(
+                user_id=user_id,
+                session_id=session_id,
+                action_type="BLOCKED",
+                inputs={"query": query},
+                output_summary="Blocked by toxicity output filter",
+                success=False,
+                error_code="TOXICITY_BLOCKED"
+            )
+            return "Response blocked by output safety rules.", "BLOCKED"
+
+        # Verify Grounding (using evidence from RAG/MCP calls)
+        grounding_check = verify_grounding(cleaned_response, evidence)
+        if not grounding_check["is_grounded"]:
+            log_transaction(
+                user_id=user_id,
+                session_id=session_id,
+                action_type="BLOCKED",
+                inputs={"query": query},
+                output_summary="Blocked due to hallucination/grounding failure",
+                success=False,
+                error_code="UNGROUNDED_RESPONSE"
+            )
+            return "Response blocked due to grounding verification failure.", "BLOCKED"
+
+        # Log successful transaction
+        log_transaction(
+            user_id=user_id,
+            session_id=session_id,
+            action_type="WRITE" if ("request" in query.lower() or "update" in query.lower() or "create" in query.lower()) else "READ",
+            inputs={"query": query},
+            output_summary=cleaned_response,
+            success=True,
+            tool_invoked=",".join(invoked_tools)
+        )
+        return cleaned_response, "SUCCESS"
+
     except Exception as e:
-        error_msg = "An internal processing error occurred. Service temporarily unavailable."
+        import uvicorn
+        logger_err = f"Agent execution crash: {e}"
         log_transaction(
             user_id=user_id,
             session_id=session_id,
             action_type="ERROR",
             inputs={"query": query},
-            output_summary=error_msg,
+            output_summary=logger_err,
             success=False,
-            error_code=type(e).__name__
+            error_code="CRASH"
         )
-        return error_msg, "ERROR"
-
-    # 2. Output Shield Screening
-    # Screen for Toxicity
-    if screen_toxicity(final_response_text):
-        refusal = "I apologize, but I cannot generate that response as it does not comply with safety guidelines."
-        log_transaction(
-            user_id=user_id,
-            session_id=session_id,
-            action_type="BLOCKED",
-            inputs={"query": query},
-            output_summary="Toxicity detected in response.",
-            success=False,
-            error_code="TOXICITY_BLOCKED"
-        )
-        return refusal, "BLOCKED"
-
-    # Screen for Grounding / Hallucination
-    retrieved_content_str = "\n".join([str(ev["response"]) for ev in evidence])
-    if evidence and not verify_grounding(final_response_text, retrieved_content_str, user_query=query):
-        # Suspect grounding failure
-        warning_msg = "I couldn't find sufficient verified policy information to complete your request. Please contact HR."
-        log_transaction(
-            user_id=user_id,
-            session_id=session_id,
-            action_type="BLOCKED",
-            inputs={"query": query},
-            output_summary="Grounding verification failed (hallucination suspect).",
-            success=False,
-            error_code="GROUNDING_FAILED"
-        )
-        return warning_msg, "BLOCKED"
-
-    # 3. SPII Redaction
-    redacted_response = redact_spii(final_response_text)
-
-    # 4. Audit Logging Success Transaction
-    action_type = "WRITE" if has_write_action else "READ"
-    log_transaction(
-        user_id=user_id,
-        session_id=session_id,
-        action_type=action_type,
-        tool_invoked=",".join(invoked_tools) if invoked_tools else None,
-        inputs={"query": query},
-        output_summary=redacted_response,
-        success=True
-    )
-
-    return redacted_response, "SUCCESS"
+        return "An internal server error occurred while processing your request.", "ERROR"
 
 
 def run_query(query: str, user_id: str = "EMP001", session_id: str = "session-1") -> str:
-    """Synchronous entry point for runners and eval harness."""
-    answer, _status = asyncio.run(run_query_async(query, user_id=user_id, session_id=session_id))
+    """Synchronous wrapper for run_query_async."""
+    answer, _ = asyncio.run(run_query_async(query, user_id, session_id))
     return answer
 
 
-def _interactive():
-    print(f"HR Agentic Solution MVP 1 CLI Playground — type 'exit' to quit.")
-    # Use default Jane Doe EMP001
-    current_user = "EMP001"
-    print(f"Active Session Authenticated User: {current_user}")
-    while True:
-        try:
-            q = input("\nyou > ").strip()
-        except (EOFError, KeyboardInterrupt):
-            break
-        if q.lower() in {"exit", "quit"}:
-            break
-        if q.startswith("/user "):
-            # Allow switching user in interactive CLI for testing RBAC
-            parts = q.split()
-            if len(parts) > 1:
-                current_user = parts[1]
-                print(f"Switched user context to: {current_user}")
-            continue
-        if q:
-            ans, status = asyncio.run(run_query_async(q, user_id=current_user))
-            print(f"\nagent [{status}] > {ans}")
-
-
-def main(argv=None):
-    argv = argv if argv is not None else sys.argv[1:]
-    if argv and argv[0] == "--interactive":
-        _interactive()
-    elif argv:
-        print(run_query(" ".join(argv)))
-    else:
-        print('Usage: uv run python -m agent.agent "<question>"  |  --interactive')
-
-
 if __name__ == "__main__":
-    main()
-
-from google.adk.apps import App
-
-app = App(root_agent=root_agent, name="agent")
+    # Interactive CLI runner
+    import sys
+    if len(sys.argv) > 1:
+        query_arg = " ".join(sys.argv[1:])
+        print(run_query(query_arg))
+    else:
+        print("Usage: uv run python -m agent.agent <query>")
