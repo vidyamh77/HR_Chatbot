@@ -6,10 +6,14 @@ import typing
 
 # --- Library Monkey-Patches for ADK compatibility with MCP SDK 2.x ---
 try:
-    if os.getenv("GOOGLE_CLOUD_AGENT_ENGINE_ENABLE_TELEMETRY") or os.getenv("AIP_MODE"):
-        raise ImportError("Bypass monkey-patches on Cloud Agent Runtime.")
+    # 1. Patch OpenTelemetry HTTPX instrumentation check to prevent crashing on httpx2 calls
+    try:
+        import opentelemetry.instrumentation.utils
+        opentelemetry.instrumentation.utils.is_http_instrumentation_enabled = lambda: False
+    except Exception:
+        pass
 
-    # Patch anyio to handle datetime.timedelta and httpx.Timeout in fail_after/move_on_after
+    # 2. Patch anyio to handle datetime.timedelta and httpx.Timeout in fail_after/move_on_after
     import anyio
     _orig_fail_after = anyio.fail_after
     _orig_move_on_after = anyio.move_on_after

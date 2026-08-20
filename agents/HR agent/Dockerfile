@@ -21,6 +21,7 @@ WORKDIR /code
 COPY ./pyproject.toml ./README.md ./
 
 COPY ./agent ./agent
+COPY ./ui ./ui
 
 RUN uv sync
 
@@ -29,4 +30,4 @@ ENV AGENT_VERSION=${AGENT_VERSION}
 
 EXPOSE 8080
 
-CMD ["uv", "run", "uvicorn", "agent.fast_api_app:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uv", "run", "uvicorn", "ui.app:app", "--host", "0.0.0.0", "--port", "8080"]
