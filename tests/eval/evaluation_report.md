@@ -20,11 +20,6 @@ To establish a clear testing context, the evaluation framework operates under th
 *   **System Boundaries**: Direct tool integrations are limited to `WorkWeek` (HCM) and `ServiceImmediately` (ITSM) mock SaaS backend servers.
 *   **Workforce Taxonomies**: Users are classified into three distinct roles with isolated access rights: standard `FTE` (Full-Time Employee), `Contractor` (TVC), and `Manager`.
 
-### Contradictory Policy Resolution & Recency Conflict Handling
-To validate the agent's RAG conflict resolution capabilities under real-world scenarios where policies might contradict or change over time:
-*   The system instructions and policies are seeded with conflicting rules containing recency/date metadata.
-*   The evaluation dataset includes tests verifying that the policy agent dynamically prioritizes the most recent policy version (based on the document metadata timestamp) and flags outdated policies appropriately.
-
 ---
 
 ## 2. Evaluation Datasets

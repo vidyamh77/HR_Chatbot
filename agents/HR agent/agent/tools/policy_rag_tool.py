@@ -5,245 +5,219 @@ from .. import config
 # Mock Policy Documents Corpus
 MOCK_POLICIES = [
     {
-        "title": "Altostrat Singapore Paid Time Off and Leave Policy",
-        "section": "Bereavement Leave",
-        "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#bereavement",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 1.1: Outpatient Sick Time & Hospitalization Leave (Singapore)",
+        "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#sick-leave",
         "content": (
-            "Altostrat Singapore provides paid bereavement leave for employees. "
-            "Full-time employees are eligible for up to 5 consecutive working days of paid bereavement leave "
-            "in the event of the death of an immediate family member (spouse, child, parent, sibling). "
-            "For extended family members, employees are eligible for up to 2 working days. "
-            "Documentation (e.g., death certificate) may be requested by HR."
+            "Altostrat Singapore provides paid sick leave to support your health and recovery when you are medically certified as unfit for work. "
+            "Outpatient Sick Leave Allowance: Eligible employees and interns receive up to 14 days of paid outpatient sick leave per calendar year, compensated at 100% of their base salary. Part-time and fixed-term employees' leave is prorated based on their contracted working hours. "
+            "Hospitalization Leave Allowance: Employees can utilize an additional 46 work days of paid hospitalization leave per year. This is not an extension of outpatient sick leave but is granted for inpatient stays, day surgeries, quarantine orders, or serious medical conditions certified by a medical practitioner employed by an approved hospital. "
+            "Notification Requirements: You must notify your manager that you need to take sick or hospitalization leave at least one hour before your normal start time. If your manager is unavailable, you must contact support. "
+            "Medical Certificate (MC) Submission: "
+            "If you are sick for more than two work days, you must submit your sick certificate from a registered medical practitioner via WorkWeek. "
+            "This certificate must be submitted within 48 hours of taking the leave. "
+            "Altostrat reserves the right to decline paid sick leave or classify the absence as unpaid if the MC is not submitted. Unapproved absences can result in disciplinary action."
         ),
-        "keywords": ["bereavement", "funeral", "death", "mourning", "compassionate"]
+        "keywords": ["sick leave", "hospitalization", "outpatient", "medical certificate", "mc", "illness", "unfit for work"]
     },
     {
-        "title": "Altostrat Singapore Remote Work Policy",
-        "section": "Remote Work Eligibility & Allowances",
-        "link": "https://altostrat.sharepoint.com/hr/policies/remote-work#eligibility",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 1.2: Paid Vacation Leave (Singapore)",
+        "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#vacation",
         "content": (
-            "Employees classified as 'Remote' in their employment contract are eligible for hardware procurement. "
-            "Eligible remote employees may request a standard home office setup, including one external monitor (up to 27 inches), "
-            "a standard keyboard, and a mouse. Requests must be submitted via ServiceImmediately and approved by the department head. "
-            "The employee profile in WorkWeek must reflect a 'Remote' status to qualify."
+            "Vacation time is provided to help employees detach from work and recharge. Employees earned their full vacation entitlement for the year on January 1. "
+            "Accrual Tier Matrix: The number of days accrued is based on years of continuous service: "
+            "1 to 6 years of service: 20 days per year. "
+            "7 to 10 years of service: 21 days per year. "
+            "11+ years of service: 22 days per year. "
+            "Proration: Employees in their first year of service receive a prorated number of vacation days based on their start date. Part-time employees accrue prorated hours based on their individual FTE percentage (e.g., 50% FTE accrues 50% of the vacation rate). "
+            "Booking and Scheduling Rules: "
+            "Vacation can be taken in half-day or full-day increments. "
+            "Shift workers must book vacation based on actual shift hours. For instance, a 12-hour shift requires 1.5 vacation days (defined as 8-hour blocks). "
+            "You must discuss and obtain approval from your manager for your planned dates at least 15 days in advance. "
+            "Any changes or cancellations to booked vacation must be processed at least 15 days before the leave starts. "
+            "Carryover & Pay-out Limitations: All unused vacation days from the current year carry over for exactly one additional year. Carried-over days must be used by December 31 of the following year or they are forfeited. Altostrat does not pay out unused vacation, except upon country-to-country transfer or termination of employment. "
+            "Floating Holidays: If a recognized public holiday falls on a Saturday or Sunday, employees are granted a floating holiday, which must be utilized like vacation before the calendar year ends. Floating holidays do not carry forward and are not cashed out upon termination. "
+            "System Constraints & Validity: All leave requests must be chronologically valid (the start date cannot occur after the end date). Furthermore, the system will automatically reject any leave request that exceeds the employee's current accrued balance."
         ),
-        "keywords": ["remote", "monitor", "home office", "procurement", "hardware", "keyboard", "mouse"]
+        "keywords": ["vacation leave", "accrual tier", "proration", "floating holiday", "carryover", "payout", "schedule vacation"]
     },
     {
-        "title": "Altostrat Singapore Medical Leave Policy",
-        "section": "Short-Term Medical Leave Procedures",
-        "link": "https://altostrat.sharepoint.com/hr/policies/medical-leave#short-term",
-        "content": (
-            "Employees are eligible for up to 14 days of paid outpatient sick leave per calendar year. "
-            "To request short-term medical leave, the employee must: "
-            "1. Inform their manager before 9:00 AM on the first day of absence. "
-            "2. Submit a Leave of Absence request in WorkWeek within 2 working days of return. "
-            "3. Upload a valid Medical Certificate (MC) from a registered medical practitioner in WorkWeek. "
-            "4. For leaves exceeding 3 consecutive days, open a ServiceImmediately ticket to trigger notification and routing for email/manager coverage."
-        ),
-        "keywords": ["medical", "sick", "doctor", "mc", "medical certificate", "hospitalisation", "short-term"]
-    },
-    {
-        "title": "Altostrat Singapore Relocation Policy",
-        "section": "Relocation Allowances & Procedures",
-        "link": "https://altostrat.sharepoint.com/hr/policies/relocation#allowance",
-        "content": (
-            "Employees transferring permanently to another global office (e.g., London) are eligible for relocation benefits. "
-            "The relocation allowance for permanent transfers to London is capped at SGD 10,000 to cover shipment and travel. "
-            "To execute a transfer, the employee must: "
-            "1. Complete and sign the Relocation Agreement. "
-            "2. Update their primary residential address in WorkWeek to the target city within 5 days of arrival. "
-            "3. Open a facilities badge ticket in ServiceImmediately to request office building access keys in the target location."
-        ),
-        "keywords": ["relocation", "transfer", "london", "allowance", "moving", "badge", "building access"]
-    },
-    {
-        "title": "Altostrat Singapore Business Courtesies & Expenses Guideline",
-        "section": "Host Gifts and Business Entertainment Spend Limits",
-        "link": "https://altostrat.sharepoint.com/hr/policies/expenses#gifts",
-        "content": (
-            "Business courtesies, including host gifts, are reimbursable up to a maximum limit of SGD 50 per event. "
-            "Reimbursement requests must be accompanied by itemized receipts. "
-            "Any host gift exceeding SGD 50 requires pre-approval from the Compliance Department."
-        ),
-        "keywords": ["gift", "host", "business courtesy", "expense", "reimbursement", "spend limit", "$50"]
-    },
-    {
-        "title": "Altostrat Singapore Business Courtesies & Expenses Guideline",
-        "section": "Strictly Prohibited Spending Categories",
-        "link": "https://altostrat.sharepoint.com/hr/policies/expenses#prohibited",
-        "content": (
-            "Certain spend categories are strictly prohibited from reimbursement, regardless of the transaction amount. "
-            "Under no circumstances shall Altostrat reimburse expenses for: "
-            "1. Gift cards, gift certificates, or pre-paid cash vouchers. "
-            "2. Adult entertainment, including hostess bars, room salons, cabaret clubs, and adult clubs. "
-            "3. Personal services or unauthorized recreational activities. "
-            "Any submission containing prohibited items will be rejected and may result in disciplinary action."
-        ),
-        "keywords": ["gift card", "prohibited", "adult entertainment", "room salon", "hostess bar", "voucher", "cabaret", "prohibition"]
-    },
-    {
-        "title": "Altostrat Singapore Childcare Leave Policy",
-        "section": "Allowance Categories & Usage",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 1.3: Childcare Leave (Singapore)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#childcare",
         "content": (
             "Paid childcare leave is available for eligible parents with children under the age of 12. "
-            "Allowance categories: "
-            "1. 6 days of paid leave per year if your children are under 7 years old. "
-            "2. 2 days of paid leave per year if your youngest child is between 7 and 12 years old. "
-            "3. 6 days of paid leave per year if you have children in both age groups. "
-            "Usage: Leave is counted in full work days. Once agreed with your manager, you must record it in WorkWeek. "
-            "Unused childcare leave does not carry over and is not paid out upon leaving the company."
+            "Allowance Categories: "
+            "6 days of paid leave per year if your children are under 7 years old. "
+            "2 days of paid leave per year if your youngest child is between 7 and 12 years old. "
+            "6 days of paid leave per year if you have children in both age groups. "
+            "Usage: Leave is counted in full work days. Once agreed with your manager, you must record it in WorkWeek. Unused childcare leave does not carry over and is not paid out upon leaving the company."
         ),
-        "keywords": ["childcare", "child", "parents", "under 12", "infant", "toddler", "kids", "youngest"]
+        "keywords": ["childcare leave", "parents", "under 12", "allowance", "WorkWeek"]
     },
     {
-        "title": "Altostrat Singapore Time Off in Lieu (TOIL) Policy",
-        "section": "TOIL Accumulation and Usage Rules",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 1.4: Time Off in Lieu (TOIL) (Singapore)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#toil",
         "content": (
-            "If you are required by the business to work on a public holiday or during the weekend, "
-            "you can claim time off in lieu to compensate for working outside your contractual hours. "
+            "If you are required by the business to work on a public holiday or during the weekend, you can claim time off in lieu to compensate for working outside your contractual hours. "
             "TOIL is granted and taken at your manager's discretion. "
-            "There is no need to enter TOIL in WorkWeek; you must talk with your manager to agree on the time off "
-            "and use your TOIL days before logging additional vacation days."
+            "There is no need to enter TOIL in WorkWeek; you must talk with your manager to agree on the time off and use your TOIL days before logging additional vacation days."
         ),
-        "keywords": ["toil", "time off in lieu", "weekend work", "public holiday", "overtime", "weekend"]
+        "keywords": ["toil", "time off in lieu", "weekend work", "public holiday", "overtime"]
     },
     {
-        "title": "Altostrat Singapore Maternity Leave Policy",
-        "section": "Maternity Leave Duration and Shared Parental Leave (SPL)",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 2.1: Maternity Leave (Singapore)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#maternity",
         "content": (
-            "Effective 1 April 2026, all eligible employees are entitled to 24 weeks of paid parental leave. "
-            "Under Phase 2 of Singapore’s MSF scheme, parents of Singaporean children born on or after 1 April 2026 "
-            "are entitled to 10 weeks of shared parental leave (SPL) (default split is 5 weeks for each parent). "
-            "SPL Donation: If your spouse donates their portion (up to 10 weeks) of SPL to you, your total paid maternity "
-            "leave can be extended to 25 or 26 weeks. SPL Allocation Audit: Regardless of the split, you must submit "
-            "proof of the official SPL allocation from LifeSG within 4 weeks of birth/adoption. "
-            "Interns who have served for a continuous period of at least 3 months are entitled to 16 weeks of statutory maternity leave. "
-            "Administrative Procedures: Maternity leave can begin up to 28 days before your expected due date. "
-            "The first 8 weeks (56 days) must be taken consecutively. The remaining 16 weeks (80 working days) can be "
-            "taken flexibly in daily increments over a 12-month period following the child's birth. "
-            "Maternity leave must be logged in WorkWeek using two separate codes: 'Singapore Leaves > SG - Maternity Leave (First 8 weeks)' "
-            "and 'Singapore Leaves > SG - Maternity Leave (80 working days)'."
+            "Paid maternity leave is offered to support pregnancy, recovery from childbirth, and infant bonding. "
+            "Duration: Effective 1 April 2026, all eligible employees are entitled to 24 weeks of paid parental leave. "
+            "Shared Parental Leave (SPL) Extension: Under Phase 2 of Singapore’s MSF scheme, parents of Singaporean children born on or after 1 April 2026 are entitled to 10 weeks of shared parental leave (default split is 5 weeks for each parent). "
+            "SPL Donation: If your spouse donates their portion (up to 10 weeks) of SPL to you, your total paid maternity leave can be extended to 25 or 26 weeks. "
+            "SPL Allocation Audit: Regardless of the split, you must submit proof of the official SPL allocation from LifeSG within 4 weeks of birth/adoption for record-keeping and statutory audits. "
+            "Moms Donating SPL: If you donate your portion of SPL to your spouse, your Altostrat maternity leave is not reduced below the 24-week baseline, as company benefits are already inclusive of and exceed statutory limits. "
+            "Interns: Eligible interns who have served for a continuous period of at least 3 months are entitled to 16 weeks of statutory maternity leave, which must be taken consecutively. Interns whose spouses donate SPL can extend their leave up to 26 weeks. "
+            "Administrative Procedures: "
+            "Maternity leave can begin up to 28 days before your expected due date. "
+            "The first 8 weeks (56 days) must be taken consecutively. The remaining 16 weeks (80 working days) can be taken flexibly in daily increments over a 12-month period following the child's birth. "
+            "Maternity leave must be logged in WorkWeek using two separate codes: 'Singapore Leaves > SG - Maternity Leave (First 8 weeks)' and 'Singapore Leaves > SG - Maternity Leave (80 working days)'."
         ),
-        "keywords": ["maternity", "parental leave", "pregnancy", "childbirth", "birth", "mother", "moms", "spl", "shared parental leave", "lifesg", "24 weeks", "baby"]
+        "keywords": ["maternity leave", "parental leave", "pregnancy", "spl", "shared parental leave", "lifesg", "24 weeks", "16 weeks", "interns"]
     },
     {
-        "title": "Altostrat Singapore Baby Bonding Leave Policy",
-        "section": "Baby Bonding Leave Allowances and Timelines",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 2.2: Baby Bonding Leave (Global)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#baby-bonding",
         "content": (
-            "Baby Bonding Leave (BBL) is available to spent time with a new child welcomed through childbirth, "
-            "adoption, surrogacy, or fostering (for parents who do not take maternity leave). "
-            "Allowance: Eligible employees can take up to 18 weeks (90 work days) of paid leave per year. "
-            "Even if multiple children are welcomed at once, only one 18-week period can be claimed. "
-            "Timelines: BBL must begin on or after the child's birth/placement date and be fully utilized within "
-            "12 months of that date, or any remaining balance is forfeited. It can be taken all at once or in weekly blocks. "
-            "Shared Parental Leave Impact (Singapore): Your baby bonding leave remains at 18 weeks regardless of the SPL "
-            "sharing arrangement with your spouse. However, if both parents are Altostrat employees and the father "
-            "allocates SPL to his partner, his BBL must be reduced to 16 or 17 weeks. "
-            "Benefit: Employees taking BBL are eligible for a monetary baby bonding benefit. "
-            "Administrative Coverage: For planned medical leaves extending beyond a standard work week, employees are "
-            "required to ensure business continuity by opening an administrative ticket (Category: 'HRSD', Priority: '3 - Moderate') "
-            "to request a temporary email delegation to their direct manager."
+            "Baby Bonding Leave (BBL) is available to spent time with a new child welcomed through childbirth, adoption, surrogacy, or fostering (for parents who do not take maternity leave). "
+            "Allowance: Eligible employees can take up to 18 weeks (90 work days) of paid leave per year. Even if multiple children are welcomed at once, only one 18-week period can be claimed. "
+            "Timelines: BBL must begin on or after the child's birth/placement date and be fully utilized within 12 months of that date, or any remaining balance is forfeited. It can be taken all at once or in weekly blocks. "
+            "Shared Parental Leave Impact (Singapore): Your baby bonding leave remains at 18 weeks regardless of the SPL sharing arrangement with your spouse. However, if both parents are Altostrat employees and the father allocates SPL to his partner, his BBL must be reduced to 16 or 17 weeks depending on the allocation, subject to periodic audits. "
+            "Monetary Benefit: Employees taking BBL are eligible for a monetary baby bonding benefit to spend on meals, cleaning, laundry, or gardening. "
+            "Administrative Coverage: For planned medical leaves extending beyond a standard work week, employees are required to ensure business continuity. To do this, employees must open an administrative ticket (Category: 'HRSD', Priority: '3 - Moderate') to request a temporary email delegation to their direct manager."
         ),
-        "keywords": ["baby bonding", "bonding leave", "bbl", "father", "dad", "adoption", "surrogacy", "fostering", "18 weeks", "90 work days", "hrsd", "parental"]
+        "keywords": ["baby bonding leave", "bbl", "fostering", "adoption", "18 weeks", "monetary benefit", "email delegation"]
     },
     {
-        "title": "Altostrat Singapore Ramp-Back Time Policy",
-        "section": "Ramp-Back Eligibility and Duration",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 2.3: Ramp-Back Time (Global)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#ramp-back",
         "content": (
             "To ease the transition back to work following a long leave, Altostrat offers ramp-back time. "
-            "Eligibility: Employees must have taken at least 10 consecutive weeks of maternity, adoption, parental, "
-            "or baby bonding leave. Duration and Schedule: You can take up to 2 weeks of paid ramp-back time "
-            "immediately upon your return. During these 2 weeks, you must work a minimum of 50% of your normal weekly hours "
-            "but will receive 100% of your normal salary. WorkWeek Entry: Salaried employees must enter the hours "
-            "not worked in WorkWeek under the type 'Ramp Back Time' with the reason 'Baby Bonding Leave'. "
-            "Hourly employees log this on their timecard in gTime."
+            "Eligibility: Employees must have taken at least 10 consecutive weeks of maternity, adoption, parental, or baby bonding leave. "
+            "Duration and Schedule: You can take up to 2 weeks of paid ramp-back time immediately upon your return. During these 2 weeks, you must work a minimum of 50% of your normal weekly hours but will receive 100% of your normal salary. "
+            "WorkWeek Entry: Salaried employees must enter the hours not worked in WorkWeek under the type 'Ramp Back Time' with the reason 'Baby Bonding Leave'. Hourly employees log this on their timecard in gTime."
         ),
-        "keywords": ["ramp-back", "ramp back", "transition", "return to work", "reduced hours", "50%"]
+        "keywords": ["ramp-back time", "transition", "reduced schedule", "50% hours", "maternity", "baby bonding"]
     },
     {
-        "title": "Altostrat Singapore Carer's Leave Policy",
-        "section": "Carer's Leave Allowances and Attestation",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 3.1: Bereavement Leave (Global)",
+        "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#bereavement",
+        "content": (
+            "Paid bereavement leave is provided to support employees during times of grief. "
+            "Allowance: Employees can take up to 4 weeks (20 work days for a standard 5-day schedule) of paid leave per event. This applies to the loss of a close loved one, including pregnancy loss (miscarriage or stillbirth). "
+            "Timeline: Bereavement leave must be taken within 12 months of the death. "
+            "Pet Loss: Paid bereavement leave does not apply to pet loss. Vacation, unpaid time off, or flexible schedules should be arranged with managers in those instances."
+        ),
+        "keywords": ["bereavement leave", "grief", "pet loss", "miscarriage", "4 weeks", "20 work days"]
+    },
+    {
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 3.2: Carer's Leave (Global)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#carer",
         "content": (
-            "Eligible employees can take up to 8 weeks of paid leave per loved one (family member, partner, dependent) "
-            "per lifetime to care for seriously or terminally ill individuals. Leave is counted in work days and can be "
-            "requested in weekly blocks or daily schedules. The minimum duration is half a work day. "
-            "You may be asked to provide written attestation or medical documentation verifying the serious health condition. "
-            "Do not share sensitive medical details when contacting support."
+            "Eligible employees can take up to 8 weeks of paid leave per loved one (family member, partner, dependent) per lifetime to care for seriously or terminally ill individuals. "
+            "Leave is counted in work days and can be requested in weekly blocks or daily schedules. The minimum duration is half a work day. "
+            "You may be asked to provide written attestation or medical documentation verifying the serious health condition. Do not share sensitive medical details when contacting support."
         ),
-        "keywords": ["carer", "care", "seriously ill", "terminally ill", "loved one", "family care", "8 weeks", "illness"]
+        "keywords": ["carer's leave", "seriously ill", "dependency", "8 weeks", "attestation"]
     },
     {
-        "title": "Altostrat Singapore Unpaid Time Off and Personal Leave Policy",
-        "section": "Short-Term Unpaid Time Off & Long-Term Personal Leave Limits",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 3.3: Unpaid Time Off & Personal Leave (Global)",
         "link": "https://altostrat.sharepoint.com/hr/policies/leave-policy#unpaid",
         "content": (
             "When accrued vacation is exhausted or low, employees may request unpaid leaves of absence. "
-            "Unpaid Time Off (Short-Term): With manager approval, you can take up to 30 calendar days of unpaid time off. "
-            "This can be taken continuously or in daily increments. Personal Leave (Long-Term): Requests to extend "
-            "unpaid time off past 30 days reclassify the entire leave as a personal leave. Limits: With manager and director "
-            "approval, employees can request up to 92 calendar days of continuous unpaid personal leave (inclusive of "
-            "any unpaid time off already taken). Personal leave must be taken in one continuous block of time. "
-            "Prerequisites: You typically need at least 2 years of tenure and to have received a 'Significant Impact' "
-            "or higher rating in your last GRAD performance cycle to qualify. It is highly recommended that you have "
-            "fewer than 10 vacation days remaining in your balance before unpaid leaves are approved."
+            "Unpaid Time Off (Short-Term): With manager approval, you can take up to 30 calendar days of unpaid time off. This can be taken continuously or in daily increments. "
+            "Personal Leave (Long-Term): Requests to extend unpaid time off past 30 days reclassify the entire leave as a personal leave. "
+            "Limits: With manager and director approval, employees can request up to 92 calendar days of continuous unpaid personal leave (inclusive of any unpaid time off already taken). Personal leave must be taken in one continuous block. "
+            "Prerequisites: You typically need at least 2 years of tenure and to have received a 'Significant Impact' or higher rating in your last GRAD performance cycle to qualify. "
+            "It is highly recommended that you have fewer than 10 vacation days remaining in your balance before unpaid leaves are approved. Personal leave cannot be used as a substitute for flexible work schedules or medical accommodations."
         ),
-        "keywords": ["unpaid leave", "personal leave", "unpaid time off", "92 days", "30 days", "tenure", "exhausted vacation", "unpaid"]
+        "keywords": ["unpaid time off", "personal leave", "92 days", "30 days", "tenure", "GRAD rating"]
     },
     {
-        "title": "Altostrat Singapore Anti-Bribery and Government Ethics Policy",
-        "section": "Written Pre-Approval Requirements for Government Officials",
-        "link": "https://altostrat.sharepoint.com/hr/policies/ethics#anti-bribery",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 4.1 & 4.3: Travel Booking & Lodging Caps",
+        "link": "https://altostrat.sharepoint.com/hr/policies/expenses#lodging",
         "content": (
-            "Altostrat has a strict zero-tolerance policy for bribery and corruption. The Golden Rule: Never offer, "
-            "promise, give, or receive anything of value to/from a government official to obtain or retain an "
-            "improper advantage. Facilitation payments are strictly prohibited. Written Pre-Approval Requirements: "
-            "1. U.S. Government Officials: Written pre-approval is required before offering anything of value of any "
-            "amount (except non-alcoholic drinks at an Altostrat office meeting). 2. Non-U.S. Government Officials: "
-            "Pre-approval is required if the value exceeds US $100, or if cumulative courtesies to that official exceed "
-            "US $200 within a rolling 6-month period."
+            "Booking Timelines: Air and hotel bookings must be completed at least 3 weeks in advance to secure reasonable rates. Discuss the trip with your manager, travel cap is 120USD per day for meals, create a ticket request as Travel from ITSM, and review the global risk map before departing. "
+            "Company Card Mandate: Employees who incur significant business expenses (>$10,000 per quarter) or single transactions over $5,000 must use their Company Card for their travel spend. "
+            "Staying with Friends/Family: Staying with a friend or relative in lieu of a hotel allows you to buy a host gift of up to US $50 per day, backed by valid receipts. Cash or gift card host gifts are strictly prohibited."
         ),
-        "keywords": ["bribery", "corruption", "government official", "facilitation payments", "pre-approval", "ethics", "u.s."]
+        "keywords": ["travel booking", "advance booking", "company card", "host gift", "lodging", "$50"]
     },
     {
-        "title": "Altostrat Singapore Travel and Expense Policy",
-        "section": "Meal Allowances, Group Meals, and Aged Claims Approvals",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 4.4: Meal Allowances & Entertainment",
         "link": "https://altostrat.sharepoint.com/hr/policies/expenses#limits",
         "content": (
-            "Daily Meal Limit: Reimbursement for individual meals on global business trips is capped at US $120 "
-            "per employee per day. All meal expenses must be individually detailed with receipts. Group Meals with "
-            "Altostrat Colleagues: Group meals are capped at US $120 per employee per day. The most senior colleague "
-            "present must pay and submit the expense. VP Pre-Approval for High-Value Events: Any group meal or "
-            "customer entertainment event costing US $500 or greater per head requires written, pre-event approval from your VP. "
-            "Aged Expense Approvals: Out-of-pocket claims older than 60 days require Director approval. "
-            "Claims older than 90 days require VP approval. Claims older than one year are non-reimbursable."
+            "Daily Meal Limit: Reimbursement for individual meals on global business trips is capped at US $120 (or equivalent) per employee per day. This is not a per diem; all meal expenses must be individually detailed with receipts. "
+            "Group Meals with Altostrat Colleagues: Group meals are capped at US $120 per employee per day. You must list all attending colleagues in Concur for tax compliance. The most senior colleague present (highest level) must pay and submit the expense to ensure independent manager approval. "
+            "VP Pre-Approval for High-Value Events: Any group meal or customer entertainment event costing US $500 or greater per head requires written, pre-event approval from your VP, which must be attached to the Concur expense report."
         ),
-        "keywords": ["travel expense", "meal allowance", "group meals", "aged claims", "vp approval", "director approval", "$120", "$500", "concur"]
+        "keywords": ["meal allowance", "daily meal limit", "group meal", "VP pre-approval", "concur", "US $120", "entertainment"]
     },
     {
-        "title": "Altostrat Singapore Travel and Expense Policy (2025)",
-        "section": "Meal Allowances & Daily Caps",
-        "link": "https://altostrat.sharepoint.com/hr/policies/expenses-2025#meals",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 5.1: Anti-Bribery & Government Ethics",
+        "link": "https://altostrat.sharepoint.com/hr/policies/ethics#anti-bribery",
         "content": (
-            "For calendar year 2025, business trip meal allowances in Singapore are capped at SGD 30 per day."
+            "Altostrat has a strict zero-tolerance policy for bribery and corruption. Never offer, promise, give, or receive anything of value to/from a government official to obtain or retain an improper advantage. 'Facilitation' or 'grease' payments to expedite routine actions are strictly prohibited. "
+            "Written Pre-Approval Requirements: "
+            "1. U.S. Government Officials: Written pre-approval is required before offering anything of value of any amount (except non-alcoholic drinks at an Altostrat office meeting). "
+            "2. Non-U.S. Government Officials: Pre-approval is required if the value exceeds US $100, or if cumulative courtesies to that official exceed US $200 within a rolling 6-month period."
         ),
-        "keywords": ["meal allowance", "daily cap", "singapore", "expenses", "2025", "food"]
+        "keywords": ["bribery", "corruption", "government official", "grease payments", "pre-approval", "compliance", "US $100"]
     },
     {
-        "title": "Altostrat Singapore Travel and Expense Policy (2026)",
-        "section": "Meal Allowances & Daily Caps",
-        "link": "https://altostrat.sharepoint.com/hr/policies/expenses-2026#meals",
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 5.2: Commercial Gifts & Entertainment (Non-Government Recipients)",
+        "link": "https://altostrat.sharepoint.com/hr/policies/expenses#commercial-gifts",
         "content": (
-            "Effective 1 January 2026, the daily meal allowance for business travel within Singapore is increased to SGD 45. "
-            "This policy supersedes all prior guidelines, including the 2025 cap of SGD 30."
+            "Adult Entertainment & Gambling Prohibitions: Business courtesies must never involve gambling, adult entertainment (strip clubs, hostess bars, room salons), cash, or cash equivalents (gift cards or certificates). "
+            "Frequency Limit: You may not exchange business courtesies with the same customer or business partner more than twice in any 3-month period. "
+            "Written Pre-Approval Thresholds (Non-Government): "
+            "Under US $100 per person: No pre-approval required. "
+            "US $100 to US $250 per person: Written pre-approval from the employee's Manager. "
+            "US $250 to US $500 per person: Written pre-approval from the employee's Director. "
+            "Over US $500 per person: Written pre-approval from the employee's VP."
         ),
-        "keywords": ["meal allowance", "daily cap", "singapore", "expenses", "2026", "food"]
+        "keywords": ["commercial gifts", "gambling", "adult entertainment", "pre-approval thresholds", "non-government"]
+    },
+    {
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 5.4: Remote Work, Telework, & Data Security",
+        "link": "https://altostrat.sharepoint.com/hr/policies/remote-work#security",
+        "content": (
+            "Public Settings Restriction: Do not work on Altostrat confidential or proprietary projects in public settings (such as coffee shops or public libraries). "
+            "Privacy Guardrails: When working away from the office, you must use a privacy screen, wear headphones during virtual meetings, and keep sensitive documents physically secured. "
+            "Home Office Equipment Allowance: Employees with an approved 'Remote' or 'Hybrid' location status are eligible for a $500 USD allowance for home office equipment, including monitors. All remote equipment orders must be submitted via a 'Facilities' category ticket and shipped directly to the employee's verified remote shipping address."
+        ),
+        "keywords": ["remote work", "telework", "public settings", "privacy screen", "home office allowance", "$500 USD", "monitors"]
+    },
+    {
+        "title": "Altostrat Singapore Employee Policy Handbook & Conduct Guidelines",
+        "section": "SECTION 5.5: Community Guidelines (Conversational Boundaries)",
+        "link": "https://altostrat.sharepoint.com/hr/policies/ethics#community",
+        "content": (
+            "WorkWeek Productivity: Disrupting the WorkWeek to engage in raging debates over politics or non-work topics is prohibited. Our primary responsibility is to do the work we were hired to do. "
+            "No Trolling: Employees must not troll, name-call, or engage in ad hominem attacks against any coworker, business partner, or public figure. This includes any demeaning or humiliating remarks."
+        ),
+        "keywords": ["community guidelines", "conversational boundaries", "trolling", "political debates", "ad hominem"]
     }
 ]
 
