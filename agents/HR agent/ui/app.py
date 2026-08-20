@@ -6,6 +6,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import logging
+import httpx
+from mcp import ClientSession
+from mcp.client.streamable_http import streamable_http_client
+from agent import config
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -34,22 +38,76 @@ class LoginResponse(BaseModel):
     name: str
     email: str
 
+LIVE_USER_MAPPING = {
+    "vidyamh": {
+        "employee_id": "EMP-386",
+        "name": "Vidya M H",
+        "email": "vidyamh@altostrat.com"
+    },
+    "jane.doe": {
+        "employee_id": "EMP-001",
+        "name": "Jane Doe",
+        "email": "jane.doe@altostrat.com"
+    },
+    "john.smith": {
+        "employee_id": "EMP-002",
+        "name": "John Smith",
+        "email": "john.smith@altostrat.com"
+    },
+    "bob.vance": {
+        "employee_id": "EMP-003",
+        "name": "Bob Vance",
+        "email": "bob.vance@altostrat.com"
+    }
+}
+
+async def verify_employee_live(employee_id: str) -> bool:
+    headers = {
+        "X-MCP-Token": config.X_MCP_TOKEN,
+        "Content-Type": "application/json"
+    }
+    try:
+        async with httpx.AsyncClient(headers=headers) as http_client:
+            async with streamable_http_client(url=config.WORKWEEK_MCP_URL, http_client=http_client) as (read_stream, write_stream):
+                async with ClientSession(read_stream, write_stream) as session:
+                    await session.initialize()
+                    res = await session.call_tool("get_personal_info", arguments={"employee_id": employee_id})
+                    response_text = "".join([part.text for part in res.content if hasattr(part, 'text')])
+                    if "not found" in response_text.lower():
+                        return False
+                    return True
+    except Exception as e:
+        logger.error(f"Error validating live employee: {e}")
+        return False
+
 @app.post("/api/login", response_model=LoginResponse)
 async def login_endpoint(req: LoginRequest):
     """Validate username and return employee profile."""
     username = req.username.strip().lower()
-    from mocks.workweek_mock import MOCK_EMPLOYEE_DB
-    for emp_id, profile in MOCK_EMPLOYEE_DB.items():
-        email = profile.get("email", "")
-        prefix = email.split("@")[0].lower()
-        if prefix == username:
-            return LoginResponse(
-                status="SUCCESS",
-                employee_id=emp_id,
-                name=profile.get("name"),
-                email=email
-            )
-    raise HTTPException(status_code=404, detail="Invalid username. Please enter a valid Altostrat username.")
+    
+    # 1. Lookup in the live mapping
+    user_info = LIVE_USER_MAPPING.get(username)
+    if not user_info:
+        raise HTTPException(
+            status_code=404, 
+            detail="Invalid username. Please enter a valid Altostrat username."
+        )
+    
+    # 2. Validate live on the WorkWeek MCP server
+    employee_id = user_info["employee_id"]
+    is_valid = await verify_employee_live(employee_id)
+    if not is_valid:
+        raise HTTPException(
+            status_code=404, 
+            detail=f"Employee profile for '{username}' (ID: {employee_id}) was not found in the live WorkWeek application database."
+        )
+        
+    return LoginResponse(
+        status="SUCCESS",
+        employee_id=employee_id,
+        name=user_info["name"],
+        email=user_info["email"]
+    )
 
 class ChatRequest(BaseModel):
     message: str
