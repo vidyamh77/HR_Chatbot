@@ -221,8 +221,14 @@ MOCK_POLICIES = [
     }
 ]
 
+import os
+from google.cloud import storage
+
+# Cache the GCS policy content in memory to avoid redundant GCS hits
+_cached_policy_content: str | None = None
+
 def search_policy_docs(query: str) -> Dict[str, Any]:
-    """Search the HR policy corpus. Supports local mock matching or Vertex AI Search.
+    """Search the HR policy corpus. Supports local mock matching or GCS Bucket retrieval.
 
     Args:
         query: A natural-language policy question or search phrase.
@@ -233,7 +239,7 @@ def search_policy_docs(query: str) -> Dict[str, Any]:
     if config.RETRIEVAL_MODE == "mock":
         return _mock_search_policy_docs(query)
     else:
-        return _vertex_search_policy_docs(query)
+        return _gcs_search_policy_docs(query)
 
 
 def _mock_search_policy_docs(query: str) -> Dict[str, Any]:
@@ -273,53 +279,33 @@ def _mock_search_policy_docs(query: str) -> Dict[str, Any]:
     }
 
 
-def _vertex_search_policy_docs(query: str) -> Dict[str, Any]:
-    """Vertex AI Search discovery engine client."""
-    from google.api_core.client_options import ClientOptions
-    from google.cloud import discoveryengine_v1 as discoveryengine
-
-    project_id = config.GOOGLE_CLOUD_PROJECT
-    location = config.VERTEX_AI_SEARCH_LOCATION
-    engine_id = config.VERTEX_AI_SEARCH_ENGINE_ID
-
-    client_options = (
-        ClientOptions(api_endpoint=f"{location}-discoveryengine.googleapis.com")
-        if location != "global"
-        else None
-    )
-    client = discoveryengine.SearchServiceClient(client_options=client_options)
-    serving_config = (
-        f"projects/{project_id}/locations/{location}/collections/default_collection"
-        f"/engines/{engine_id}/servingConfigs/default_search"
-    )
-    content_spec = discoveryengine.SearchRequest.ContentSearchSpec(
-        extractive_content_spec=discoveryengine.SearchRequest.ContentSearchSpec.ExtractiveContentSpec(
-            max_extractive_answer_count=3, max_extractive_segment_count=3
-        )
-    )
-    request = discoveryengine.SearchRequest(
-        serving_config=serving_config, query=query, page_size=3, content_search_spec=content_spec
-    )
+def _gcs_search_policy_docs(query: str) -> Dict[str, Any]:
+    """Retrieves the official HR policy handbook from Google Cloud Storage for grounded reasoning."""
+    global _cached_policy_content
     
-    response = client.search(request)
+    if _cached_policy_content is None:
+        try:
+            # Connect to GCS bucket defined in environment or fallback
+            bucket_name = os.environ.get("POLICY_BUCKET_NAME", f"{config.GOOGLE_CLOUD_PROJECT}-policy-handbook")
+            file_name = "singapore_employee_handbook.txt"
+            
+            storage_client = storage.Client()
+            bucket = storage_client.bucket(bucket_name)
+            blob = bucket.blob(file_name)
+            
+            _cached_policy_content = blob.download_as_text()
+        except Exception as e:
+            # Fall back to local mock policies if GCS fails or credentials not present
+            context_parts = []
+            for doc in MOCK_POLICIES:
+                context_parts.append(
+                    f"Source: {doc['title']} - Section: {doc['section']}\n"
+                    f"Link: {doc['link']}\n"
+                    f"Content: {doc['content']}"
+                )
+            _cached_policy_content = "\n\n".join(context_parts)
 
-    context_parts = []
-    citations = []
-
-    for result in response.results:
-        d = result.document.derived_struct_data
-        link = d.get('link')
-        if link:
-            citations.append(link)
-        
-        segments = d.get('extractive_segments', [])
-        for segment in segments:
-            content = segment.get('content')
-            if content:
-                context_parts.append(f"Source: {link}\nContent: {content}")
-                
-    grounded_context = "\n\n".join(context_parts)
     return {
-        "grounded_context": grounded_context,
-        "citations": list(set(citations))
+        "grounded_context": _cached_policy_content,
+        "citations": ["https://altostrat.sharepoint.com/hr/policies/singapore-employee-handbook"]
     }
