@@ -73,22 +73,19 @@
     <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 shadow-xl max-w-md w-full mx-4 border border-slate-200">
             <h2 class="text-2xl font-bold text-slate-800 mb-2">Altostrat HR Portal</h2>
-            <p class="text-sm text-slate-500 mb-6">Please select your employee profile to log in. No password required for testing.</p>
+            <p class="text-sm text-slate-500 mb-6">Please enter your Altostrat username (email prefix) to log in.</p>
             
-            <div class="space-y-4">
+            <form id="loginForm" class="space-y-4">
                 <div>
-                    <label for="loginSelector" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Select Account</label>
-                    <select id="loginSelector" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer font-semibold text-slate-700">
-                        <option value="EMP001">Jane Doe (jane.doe@altostrat.com - Engineer)</option>
-                        <option value="EMP002">John Smith (john.smith@altostrat.com - Sales)</option>
-                        <option value="EMP003">Bob Vance (bob.vance@altostrat.com - Manager)</option>
-                    </select>
+                    <label for="usernameInput" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Username</label>
+                    <input type="text" id="usernameInput" placeholder="e.g. vidyamh, jane.doe" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold text-slate-700" autocomplete="off" required />
+                    <p id="loginError" class="text-xs text-rose-600 mt-2 font-semibold hidden"></p>
                 </div>
                 
-                <button id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 font-semibold text-sm shadow transition mt-2">
+                <button type="submit" id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 font-semibold text-sm shadow transition mt-2">
                     Confirm Login
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 

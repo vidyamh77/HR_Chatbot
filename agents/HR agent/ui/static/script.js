@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginModal = document.getElementById("loginModal");
     const mainLayout = document.getElementById("mainLayout");
     const userInfoHeader = document.getElementById("userInfoHeader");
-    const loginSelector = document.getElementById("loginSelector");
+    const loginForm = document.getElementById("loginForm");
+    const usernameInput = document.getElementById("usernameInput");
+    const loginError = document.getElementById("loginError");
     const loginBtn = document.getElementById("loginBtn");
     const logoutBtn = document.getElementById("logoutBtn");
     const activeUserLabel = document.getElementById("activeUserLabel");
@@ -30,16 +32,43 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    loginBtn.addEventListener("click", () => {
-        const selectedId = loginSelector.value;
-        const selectedOptionText = loginSelector.options[loginSelector.selectedIndex].text;
-        const selectedName = selectedOptionText.split(" (")[0];
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = usernameInput.value.trim();
+        if (!username) return;
 
-        localStorage.setItem("employee_id", selectedId);
-        localStorage.setItem("employee_name", selectedName);
-        activeUser = selectedId;
-        activeName = selectedName;
-        checkLoginState();
+        loginError.classList.add("hidden");
+        loginBtn.disabled = true;
+        loginBtn.textContent = "Verifying...";
+
+        try {
+            const res = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username: username })
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                loginError.textContent = data.detail || "Verification failed.";
+                loginError.classList.remove("hidden");
+                return;
+            }
+
+            const data = await res.json();
+            localStorage.setItem("employee_id", data.employee_id);
+            localStorage.setItem("employee_name", data.name);
+            activeUser = data.employee_id;
+            activeName = data.name;
+            checkLoginState();
+        } catch (err) {
+            console.error(err);
+            loginError.textContent = "Unable to connect to the authentication server.";
+            loginError.classList.remove("hidden");
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.textContent = "Confirm Login";
+        }
     });
 
     logoutBtn.addEventListener("click", () => {

@@ -49,6 +49,21 @@ MOCK_EMPLOYEE_DB: Dict[str, Dict[str, Any]] = {
             "vacation": {"accrued": 25, "used": 10, "remaining": 15},
             "sick": {"accrued": 14, "used": 0, "remaining": 14}
         }
+    },
+    "EMP004": {
+        "employee_id": "EMP004",
+        "name": "Vidya M H",
+        "email": "vidyamh@altostrat.com",
+        "department": "Engineering",
+        "role": "Lead Architect",
+        "manager": None,
+        "hire_date": "2021-08-01",
+        "address": "12 Pasir Panjang Rd, Singapore",
+        "phone": "+6591112222",
+        "leave_balances": {
+            "vacation": {"accrued": 22, "used": 4, "remaining": 18},
+            "sick": {"accrued": 14, "used": 1, "remaining": 13}
+        }
     }
 }
 

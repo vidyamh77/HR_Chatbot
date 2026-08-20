@@ -25,6 +25,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class LoginRequest(BaseModel):
+    username: str
+
+class LoginResponse(BaseModel):
+    status: str
+    employee_id: str
+    name: str
+    email: str
+
+@app.post("/api/login", response_model=LoginResponse)
+async def login_endpoint(req: LoginRequest):
+    """Validate username and return employee profile."""
+    username = req.username.strip().lower()
+    from mocks.workweek_mock import MOCK_EMPLOYEE_DB
+    for emp_id, profile in MOCK_EMPLOYEE_DB.items():
+        email = profile.get("email", "")
+        prefix = email.split("@")[0].lower()
+        if prefix == username:
+            return LoginResponse(
+                status="SUCCESS",
+                employee_id=emp_id,
+                name=profile.get("name"),
+                email=email
+            )
+    raise HTTPException(status_code=404, detail="Invalid username. Please enter a valid Altostrat username.")
+
 class ChatRequest(BaseModel):
     message: str
     user_id: str = "EMP001"
