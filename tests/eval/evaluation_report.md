@@ -78,3 +78,17 @@ To run the evaluations using the `agents-cli` tool:
       --config tests/eval/eval_config.yaml \
       --dataset tests/eval/datasets/eval-multi-turn.json
     ```
+
+---
+
+## 5. Evaluation Cost & Execution Time Analysis
+
+This section outlines the cost budget and latency targets for running the evaluation suite:
+
+| Parameter | Target / Limit | Description |
+| :--- | :--- | :--- |
+| **Synthetic Data Gen Tokens** | `150,000` | Maximum token ceiling for synthetic query expansion and context synthesis. |
+| **LLM Judge API Cost** | `0.05 SGD / case` | Budget cap for LLM-as-a-judge evaluations utilizing Vertex AI/Gemini endpoints. |
+| **Batch Rate-Limiting Buffer** | `300 seconds` | Sleep/backoff window between batch runs to prevent quota exhaustions (429 rate limit exceptions). |
+| **Latency Targets** | `< 10.0s average` | Target end-to-end processing response latency for standard execution pipelines. |
+
