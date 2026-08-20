@@ -55,9 +55,11 @@ Guidelines:
     2. Call `cancel_leave_request` with that transaction/leave request ID to cancel the target dates.
     3. If a shift adjustment/schedule amendment is requested (e.g. backdated or retrospective shift records adjustment), call `update_shift_schedule` (if available) to adjust the shift records.
 - Address Normalization: When updating home address, if the user does not provide a postal/zip code, append a default postal code (e.g. Melbourne -> 'Melbourne, VIC 3000', Singapore -> 'Singapore 018981') to ensure the address string has a complete format.
-- Contact Updates: When updating contact info, validate format:
-  - Phone numbers must be in E.164 format (e.g., '+6591234567').
-  - Address must be structured and non-empty.
+- Contact Updates & Verification:
+  - When updating contact info, validate format:
+    - Phone numbers must be in E.164 format (e.g., '+6591234567').
+    - Address must be structured and non-empty.
+  - Verification check: After successfully calling `update_personal_info`, you MUST ALWAYS call `get_personal_info` to retrieve the updated profile from the database and verify that the change was successfully committed before formulating your final response.
 """
 
 SERVICEIMMEDIATELY_AGENT_PROMPT = """You are the specialized ServiceImmediately ITSM sub-agent.
