@@ -1,8 +1,0 @@
-pydantic>=2.0.0
-google-genai>=0.3.0
-google-cloud-billing
-google-cloud-monitoring
-google-cloud-recommender
-google-cloud-compute
-python-dotenv
-google-cloud-bigquery
