@@ -52,7 +52,7 @@ workweek_agent = LlmAgent(
     name="workweek_agent",
     description="Handles employee profiles, leave balances, contact updates, and leave requests.",
     instruction=WORKWEEK_AGENT_PROMPT,
-    tools=[workweek_mcp]
+    tools=[workweek_mcp, search_employee_by_name]
 )
 
 serviceimmediately_agent = LlmAgent(
@@ -88,6 +88,40 @@ def is_manager_of(manager_id: str, employee_id: str) -> bool:
     reports = MANAGER_MAP.get(m_id, [])
     return e_id in reports
 
+names_map = {
+    "luke wilson": "EMP-004",
+    "luke": "EMP-004",
+    "john smith": "EMP-001",
+    "john": "EMP-001",
+    "suman banerjee": "EMP-361",
+    "suman": "EMP-361",
+    "vivek anurag": "EMP-474",
+    "vivek": "EMP-474",
+    "vidya m h": "EMP-386",
+    "vidya": "EMP-386"
+}
+
+async def search_employee_by_name(name: str) -> str:
+    """Queries the company directory to find an employee's ID by name.
+    
+    Args:
+        name: The full name or first name of the employee (case-insensitive).
+    """
+    n_lower = name.lower()
+    matches = []
+    for emp_name, emp_id in names_map.items():
+        if n_lower in emp_name:
+            matches.append({
+                "employee_id": emp_id,
+                "name": emp_name
+            })
+            
+    if not matches:
+        return f"No employee found matching name '{name}'."
+        
+    import json
+    return json.dumps(matches)
+
 def resolve_employee_id(query: str) -> str | None:
     """Helper to resolve common names or extract employee ID format from query."""
     import re
@@ -97,18 +131,6 @@ def resolve_employee_id(query: str) -> str | None:
         return emp_match.group(0)
         
     query_lower = query.lower()
-    names_map = {
-        "luke wilson": "EMP-004",
-        "luke": "EMP-004",
-        "john smith": "EMP-001",
-        "john": "EMP-001",
-        "suman banerjee": "EMP-361",
-        "suman": "EMP-361",
-        "vivek anurag": "EMP-474",
-        "vivek": "EMP-474",
-        "vidya m h": "EMP-386",
-        "vidya": "EMP-386"
-    }
     for name, emp_id in names_map.items():
         if name in query_lower:
             return emp_id
