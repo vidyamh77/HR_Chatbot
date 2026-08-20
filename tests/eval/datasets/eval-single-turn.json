@@ -331,6 +331,32 @@
         "role": "model",
         "parts": [{"text": "Approved / Sick / INC / Coverage / low priority"}]
       }
+    },
+    {
+      "eval_case_id": "valid_hcm_28",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Please cancel my medical leave and adjust my shift schedule backdated.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "canceled / medical leave / shift adjusted"}]
+        }
+      }
+    },
+    {
+      "eval_case_id": "valid_itsm_15",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "Explain why my ticket INC0002778 became Low priority and what its SLA is.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "response": {
+          "role": "model",
+          "parts": [{"text": "INC0002778 / Low / SLA schedule / priority"}]
+        }
+      }
     }
   ]
 }
