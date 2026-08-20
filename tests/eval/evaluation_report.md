@@ -89,12 +89,25 @@ To run the evaluations using the `agents-cli` tool:
 
 ## 5. Evaluation Cost & Execution Time Analysis
 
-This section outlines the cost budget and latency targets for running the evaluation suite:
+This section outlines the cost budget, concurrency controls, and backoff throttle policy for running the evaluation suite:
 
-| Parameter | Target / Limit | Description |
+| Parameter | Target / Limit | Details & Configuration |
 | :--- | :--- | :--- |
-| **Synthetic Data Gen Tokens** | `150,000` | Maximum token ceiling for synthetic query expansion and context synthesis. |
-| **LLM Judge API Cost** | `0.05 SGD / case` | Budget cap for LLM-as-a-judge evaluations utilizing Vertex AI/Gemini endpoints. |
-| **Batch Rate-Limiting Buffer** | `300 seconds` | Sleep/backoff window between batch runs to prevent quota exhaustions (429 rate limit exceptions). |
-| **Latency Targets** | `< 10.0s average` | Target end-to-end processing response latency for standard execution pipelines. |
+| **Evaluation Cost Target** | `< $5.00 per 100 runs` | Projected actual cost is **~$0.20 per 100 runs** based on Gemini 2.5/3.6 Flash pricing ($0.075/1M input, $0.30/1M output tokens). |
+| **Execution Concurrency** | `5 threads max` | To avoid model quota exhaustion, append `--concurrency 5` to the `agents-cli eval run` commands. |
+| **Model Timeout & Backoff** | `Exponential backoff` | The SDK client handles HTTP 429 and 503 rate limits with a minimum wait of 2s doubling up to 60s per retry. |
+| **Synthetic Data Gen Limit** | `150,000 tokens` | Max token ceiling for synthetic dataset generation and test-case creation. |
+| **LLM Judge Cost Cap** | `$0.05 per case` | Budget cap per evaluated test case. Automated safety pre-checks bypass LLM grading and cost $0. |
+| **Latency Target** | `< 10.0s average` | Target end-to-end processing response latency for standard execution pipelines. |
+
+### Quota & Throttle Policies (HTTP 429 Mitigation)
+To run evaluations without triggering transient API quota errors, configure the following runtime settings:
+1.  **Set Concurrency Limit**: Always run the evaluations with the thread-count capped at 5:
+    ```bash
+    agents-cli eval run --concurrency 5 --config tests/eval/eval_config.yaml --dataset tests/eval/datasets/eval-data.json
+    ```
+2.  **SDK Backoff & Retries**: Ensure the underlying Python environment uses GenAI client retries by setting the environment variables:
+    ```bash
+    export GOOGLE_GENAI_MAX_RETRIES=5
+    ```
 
