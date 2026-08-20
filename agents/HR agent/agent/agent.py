@@ -1,7 +1,7 @@
 """HR Agentic Solution Orchestrator and Runner (Hub-and-Spoke Architecture)."""
 import asyncio
 import sys
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
@@ -24,19 +24,26 @@ from .guardrails.input_shield import validate_input
 from .guardrails.output_shield import redact_spii, screen_toxicity, verify_grounding
 from .guardrails.audit_logger import log_transaction
 
-# 1. Instantiate Spoke MCP and RAG Toolsets
+# 1. Define dynamic header provider for tenant isolation
+def mcp_header_provider(readonly_context) -> dict[str, str]:
+    token = readonly_context.state.get("x_mcp_token")
+    if not token:
+        token = config.X_MCP_TOKEN
+    return {"X-MCP-Token": token}
+
+# Instantiate Spoke MCP and RAG Toolsets
 workweek_mcp = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
         url=config.WORKWEEK_MCP_URL,
-        headers={"X-MCP-Token": config.X_MCP_TOKEN}
-    )
+    ),
+    header_provider=mcp_header_provider
 )
 
 serviceimmediately_mcp = McpToolset(
     connection_params=StreamableHTTPConnectionParams(
         url=config.SERVICEIMMEDIATELY_MCP_URL,
-        headers={"X-MCP-Token": config.X_MCP_TOKEN}
-    )
+    ),
+    header_provider=mcp_header_provider
 )
 
 # 2. Define Spoke Agents (Each has its own dedicated tools)
@@ -117,7 +124,12 @@ async def _ensure_session_async(user_id: str, session_id: str):
         pass  # Already exists
 
 
-async def run_query_async(query: str, user_id: str = "EMP001", session_id: str = "session-1") -> Tuple[str, str]:
+async def run_query_async(
+    query: str, 
+    user_id: str = "EMP001", 
+    session_id: str = "session-1",
+    mcp_token: Optional[str] = None
+) -> Tuple[str, str]:
     """Asynchronously runs a query through safety guardrails, execution, and output checks.
 
     Returns:
@@ -150,8 +162,18 @@ async def run_query_async(query: str, user_id: str = "EMP001", session_id: str =
     evidence = []
     invoked_tools = []
 
+    # Configure session state delta
+    state_delta = {}
+    if mcp_token:
+        state_delta["x_mcp_token"] = mcp_token
+
     try:
-        async for event in runner.run_async(user_id=user_id, session_id=session_id, new_message=message):
+        async for event in runner.run_async(
+            user_id=user_id, 
+            session_id=session_id, 
+            new_message=message,
+            state_delta=state_delta
+        ):
             if not (event.content and event.content.parts):
                 continue
             

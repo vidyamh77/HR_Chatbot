@@ -151,11 +151,15 @@ async def chat_endpoint(req: ChatRequest, request: Request):
     logger.info("=================================")
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty")
+        
+    mcp_token = request.headers.get("x-mcp-token") or request.headers.get("X-MCP-Token")
+    
     try:
         response, status = await run_query_async(
             query=req.message,
             user_id=req.user_id,
-            session_id=req.session_id
+            session_id=req.session_id,
+            mcp_token=mcp_token
         )
         return ChatResponse(response=response, status=status)
     except Exception as e:
