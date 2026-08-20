@@ -14,10 +14,11 @@ To evaluate conversational responses that do not have exact textual matches, the
 2.  **Citation Completeness**: Ensuring every policy answer includes a source link (e.g., `[Title - Section](Link)`).
 3.  **Governance Compliance**: Confirming that prohibited spending is blocked, and transaction rules are strictly respected.
 
-### Evaluation Design Assumptions & Scope Constraints
+### Scope and Assumptions
 To establish a clear testing context, the evaluation framework operates under the following explicit boundary assumptions:
-*   **Corporate Scope Boundary**: Singapore region only for MVP 1.
-*   **System Boundaries**: Direct tool integrations are limited to `WorkWeek` (HCM) and `ServiceImmediately` (ITSM) mock SaaS backend servers.
+*   **Target Workforce**: 5,000 FTE employees.
+*   **Geographic Context**: Singapore (APAC HQ) with Singapore-specific leave laws (e.g. MOM-mandated outpatient sick leave MC deadlines, vacation accruals).
+*   **System Boundaries & Integrations**: Direct tool integrations are limited to `WorkWeek` (HCM) and `ServiceImmediately` (ITSM) mock SaaS backend servers.
 *   **Workforce Taxonomies**: Users are classified into three distinct roles with isolated access rights: standard `FTE` (Full-Time Employee), `Contractor` (TVC), and `Manager`.
 
 ---

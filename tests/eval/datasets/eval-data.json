@@ -296,6 +296,28 @@
         "role": "model",
         "parts": [{"text": "strictly prohibited / room salon / adult entertainment"}]
       }
+    },
+    {
+      "eval_case_id": "uc-2.1_procurement_flow",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "I want to order a home office monitor. Can you verify my location and open a ticket?\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "role": "model",
+        "parts": [{"text": "Facilities ticket / monitor / $500 USD / Remote or Hybrid"}]
+      }
+    },
+    {
+      "eval_case_id": "uc-2.2_medical_leave_flow",
+      "prompt": {
+        "role": "user",
+        "parts": [{"text": "I need short-term medical leave starting next Monday (2026-09-07 to 2026-09-09) for 3 days.\n\n[System Context: Active User ID is 'EMP-386']"}]
+      },
+      "reference": {
+        "role": "model",
+        "parts": [{"text": "Approved / Sick / INC / Coverage / low priority"}]
+      }
     }
   ]
 }
