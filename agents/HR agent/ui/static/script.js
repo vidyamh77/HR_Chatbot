@@ -4,6 +4,52 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatForm = document.getElementById("chatForm");
     const userInput = document.getElementById("userInput");
 
+    // Login UI elements
+    const loginModal = document.getElementById("loginModal");
+    const mainLayout = document.getElementById("mainLayout");
+    const userInfoHeader = document.getElementById("userInfoHeader");
+    const loginSelector = document.getElementById("loginSelector");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const activeUserLabel = document.getElementById("activeUserLabel");
+
+    // Initialize session state
+    let activeUser = localStorage.getItem("employee_id");
+    let activeName = localStorage.getItem("employee_name");
+
+    const checkLoginState = () => {
+        if (activeUser && activeName) {
+            activeUserLabel.textContent = `${activeName} (${activeUser})`;
+            loginModal.classList.add("hidden");
+            mainLayout.classList.remove("hidden");
+            userInfoHeader.classList.remove("hidden");
+        } else {
+            loginModal.classList.remove("hidden");
+            mainLayout.classList.add("hidden");
+            userInfoHeader.classList.add("hidden");
+        }
+    };
+
+    loginBtn.addEventListener("click", () => {
+        const selectedId = loginSelector.value;
+        const selectedOptionText = loginSelector.options[loginSelector.selectedIndex].text;
+        const selectedName = selectedOptionText.split(" (")[0];
+
+        localStorage.setItem("employee_id", selectedId);
+        localStorage.setItem("employee_name", selectedName);
+        activeUser = selectedId;
+        activeName = selectedName;
+        checkLoginState();
+    });
+
+    logoutBtn.addEventListener("click", () => {
+        localStorage.clear();
+        window.location.reload();
+    });
+
+    // Check login state on startup
+    checkLoginState();
+
     // Marked options configuration
     marked.setOptions({
         gfm: true,
@@ -61,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage("user", msg, "user");
 
         // Prepare context parameters
-        const selectedUser = "EMP-386";
+        const selectedUser = activeUser;
 
         // Append loader bubble
         const loader = document.createElement("div");

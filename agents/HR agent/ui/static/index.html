@@ -30,10 +30,16 @@
             <span class="text-xl font-bold tracking-wide">Altostrat HR Portal</span>
             <span class="bg-blue-800 text-xs px-2.5 py-1 rounded-full uppercase font-semibold">Agentic Assistant MVP 1</span>
         </div>
+        <div id="userInfoHeader" class="flex items-center space-x-3 text-sm hidden">
+            <span class="text-blue-100">Logged in as: <strong id="activeUserLabel" class="text-white">...</strong></span>
+            <button id="logoutBtn" class="bg-blue-800 hover:bg-blue-700 text-xs text-blue-100 hover:text-white px-2.5 py-1.5 rounded-lg border border-blue-500 transition font-semibold">
+                Log Out
+            </button>
+        </div>
     </header>
 
     <!-- Main Content Layout -->
-    <div class="flex-1 flex overflow-hidden">
+    <div id="mainLayout" class="flex-1 flex overflow-hidden hidden">
         
         <!-- Chat Workspace Area -->
         <main class="flex-1 flex flex-col bg-slate-50 overflow-hidden">
@@ -61,6 +67,29 @@
                 </form>
             </footer>
         </main>
+    </div>
+
+    <!-- Login Modal Overlay -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-50">
+        <div class="bg-white rounded-2xl p-8 shadow-xl max-w-md w-full mx-4 border border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-800 mb-2">Altostrat HR Portal</h2>
+            <p class="text-sm text-slate-500 mb-6">Please select your employee profile to log in. No password required for testing.</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label for="loginSelector" class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Select Account</label>
+                    <select id="loginSelector" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer font-semibold text-slate-700">
+                        <option value="EMP001">Jane Doe (jane.doe@altostrat.com - Engineer)</option>
+                        <option value="EMP002">John Smith (john.smith@altostrat.com - Sales)</option>
+                        <option value="EMP003">Bob Vance (bob.vance@altostrat.com - Manager)</option>
+                    </select>
+                </div>
+                
+                <button id="loginBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 font-semibold text-sm shadow transition mt-2">
+                    Confirm Login
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Script connection -->

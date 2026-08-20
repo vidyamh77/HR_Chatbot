@@ -1,10 +1,13 @@
 """Web UI FastAPI backend server for the HR Agentic Solution."""
 import os
 import sys
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import logging
+
+logger = logging.getLogger("uvicorn.error")
 
 # Add parent directory to path to import agent modules and mocks
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -32,8 +35,12 @@ class ChatResponse(BaseModel):
     status: str
 
 @app.post("/api/chat", response_model=ChatResponse)
-async def chat_endpoint(req: ChatRequest):
+async def chat_endpoint(req: ChatRequest, request: Request):
     """Chat endpoint to query the agent."""
+    logger.info("=== INCOMING REQUEST HEADERS ===")
+    for k, v in request.headers.items():
+        logger.info(f"  {k}: {v}")
+    logger.info("=================================")
     if not req.message.strip():
         raise HTTPException(status_code=400, detail="Message cannot be empty")
     try:
