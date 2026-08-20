@@ -71,13 +71,48 @@ policy_agent = LlmAgent(
     tools=[search_policy_docs]
 )
 
+class AccessDeniedException(Exception):
+    """Exception raised when an employee attempts unauthorized access to another employee's records."""
+    pass
+
+def is_manager_of(manager_id: str, employee_id: str) -> bool:
+    """Manager mapping validation utility."""
+    m_id = manager_id.replace("-", "").upper()
+    e_id = employee_id.replace("-", "").upper()
+    
+    # Manager mapping lookup (Bob Vance EMP003 is manager of standard reports)
+    MANAGER_MAP = {
+        "EMP003": ["EMP001", "EMP002", "EMP004", "EMP361", "EMP474", "EMP386", "JOHNSMITH"]
+    }
+    
+    reports = MANAGER_MAP.get(m_id, [])
+    return e_id in reports
+
 # 3. Define Hub Routing Tools (Allows Hub Agent to delegate to Spoke Agents)
 async def query_workweek_agent(query: str, tool_context: ToolContext) -> str:
-    """Delegates a query to the WorkWeek Agent to check balances, profiles, or requests.
+    """Delegates a query to the WorkWeek Agent after validating RBAC access rules.
     
     Args:
         query: The request/instruction for the WorkWeek agent.
     """
+    import re
+    # Extract target employee ID (e.g. EMP-386, EMP-004) from query
+    emp_match = re.search(r"EMP-?\d+", query, re.IGNORECASE)
+    target_emp = emp_match.group(0) if emp_match else None
+    
+    # Extract active user from session state
+    active_user = tool_context.state.get("active_user_id") or "EMP001"
+    
+    if target_emp:
+        target_std = target_emp.replace("-", "").upper()
+        active_std = active_user.replace("-", "").upper()
+        
+        # If user is trying to view/modify someone else's record and is not their manager
+        if target_std != active_std and not is_manager_of(active_user, target_emp):
+            raise AccessDeniedException(
+                f"Access Denied: User {active_user} is not authorized to access records of {target_emp}."
+            )
+            
     return await tool_context.run_node(workweek_agent, query)
 
 async def query_serviceimmediately_agent(query: str, tool_context: ToolContext) -> str:
@@ -166,6 +201,7 @@ async def run_query_async(
     state_delta = {}
     if mcp_token:
         state_delta["x_mcp_token"] = mcp_token
+    state_delta["active_user_id"] = user_id
 
     try:
         async for event in runner.run_async(
@@ -234,6 +270,19 @@ async def run_query_async(
             tool_invoked=",".join(invoked_tools)
         )
         return cleaned_response, "SUCCESS"
+
+    except AccessDeniedException as e:
+        logger_err = f"Access Denied: {e}"
+        log_transaction(
+            user_id=user_id,
+            session_id=session_id,
+            action_type="BLOCKED",
+            inputs={"query": query},
+            output_summary=logger_err,
+            success=False,
+            error_code="ACCESS_DENIED"
+        )
+        return "Access Denied: You are not authorized to view or modify this record.", "BLOCKED"
 
     except Exception as e:
         import traceback
